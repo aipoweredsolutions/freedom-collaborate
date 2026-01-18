@@ -23,6 +23,7 @@ export function NewProject() {
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [budget, setBudget] = useState('');
+    const [isRevenueBased, setIsRevenueBased] = useState(false);
     const [deadline, setDeadline] = useState('');
     const [category, setCategory] = useState('');
     const [projectType, setProjectType] = useState<'Startup' | 'Hackathon' | 'Enterprise'>('Startup');
@@ -69,14 +70,14 @@ export function NewProject() {
         const newProject = {
             id: 'p-' + Date.now(),
             title: projectTitle,
-            creator: 'Demo User', // In a real app, this would be the logged-in user
-            budget: Number(budget),
+            creator: 'Demo User',
+            budget: isRevenueBased ? 0 : Number(budget),
+            isRevenueBased,
             type: projectType,
             rolesCount: roles.length,
             description: projectDescription,
             submittedDate: new Date().toISOString().split('T')[0],
-            roles: roles, // Storing roles for detailed review
-            // New duration fields
+            roles: roles,
             duration: {
                 type: durationSelection,
                 startDate: durationSelection === 'fixed' ? startDate : null,
@@ -101,7 +102,7 @@ export function NewProject() {
         navigate('/projects');
     };
 
-    const canProceedStep1 = projectTitle && projectDescription && budget && deadline && category &&
+    const canProceedStep1 = projectTitle && projectDescription && (isRevenueBased || budget) && deadline && category &&
         (durationSelection === 'fixed' ? (startDate && endDate) : true);
     const canProceedStep2 = roles.length > 0 &&
         roles.every(r => r.title && r.split > 0) &&
@@ -200,7 +201,20 @@ export function NewProject() {
                                         placeholder="15000"
                                         value={budget}
                                         onChange={(e) => setBudget(e.target.value)}
+                                        disabled={isRevenueBased}
                                     />
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <input
+                                            type="checkbox"
+                                            id="revOnly"
+                                            className="h-4 w-4 rounded border-slate-300"
+                                            checked={isRevenueBased}
+                                            onChange={(e) => setIsRevenueBased(e.target.checked)}
+                                        />
+                                        <label htmlFor="revOnly" className="text-xs text-slate-500 cursor-pointer hover:text-slate-700 transition-colors">
+                                            Revenue-Share Only (No upfront budget)
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -509,7 +523,9 @@ export function NewProject() {
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-slate-600">Budget:</span>
-                                            <span className="font-medium text-slate-900">${Number(budget).toLocaleString()}</span>
+                                            <span className="font-medium text-slate-900">
+                                                {isRevenueBased ? 'Revenue Split' : `$${Number(budget).toLocaleString()}`}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-slate-600">Deadline:</span>

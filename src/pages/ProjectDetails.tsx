@@ -377,7 +377,8 @@ const mockProjectDetails: Record<string, any> = {
         id: '8',
         title: 'Global Artisan Collective (Etsy Partnership)',
         description: 'I have a collection of high-quality handcrafted designs and physical items (jewelry and home decor) that have high demand but I cannot sell them on Etsy as it is not supported in my region. I am looking for a responsible partner in the USA to open a shop, manage regional logistics, and handle customer communication. I will handle all design, production, and international shipping to your hub.',
-        budget: 12000,
+        budget: 0,
+        isRevenueBased: true,
         status: 'open',
         type: 'Startup',
         roles: [
@@ -531,8 +532,10 @@ export function ProjectDetails() {
                                 <div className="flex items-center gap-2 text-slate-600">
                                     <DollarSign className="h-5 w-5 text-primary-500" />
                                     <div>
-                                        <p className="text-xs text-slate-500">Total Budget</p>
-                                        <p className="font-semibold text-slate-900">${project.budget.toLocaleString()}</p>
+                                        <p className="text-xs text-slate-500">{project.isRevenueBased ? 'Payment Model' : 'Total Budget'}</p>
+                                        <p className="font-semibold text-slate-900">
+                                            {project.isRevenueBased ? 'Revenue-Based Split' : `$${project.budget.toLocaleString()}`}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 text-slate-600">
@@ -845,9 +848,11 @@ export function ProjectDetails() {
                                     <span className="font-semibold text-slate-900">{project.roles.length}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Avg. Revenue/Role</span>
+                                    <span className="text-slate-600">
+                                        {project.isRevenueBased ? 'Revenue Share' : 'Avg. Revenue/Role'}
+                                    </span>
                                     <span className="font-semibold text-slate-900">
-                                        ${Math.round(project.budget / project.roles.length).toLocaleString()}
+                                        {project.isRevenueBased ? 'Sales-Based' : `$${Math.round(project.budget / project.roles.length).toLocaleString()}`}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">

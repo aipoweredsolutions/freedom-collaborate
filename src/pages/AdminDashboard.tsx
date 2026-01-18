@@ -207,7 +207,9 @@ export function AdminDashboard() {
                                             <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 mb-6 font-medium">
                                                 <div className="flex items-center gap-2">
                                                     <DollarSign className="h-4 w-4 text-green-600" />
-                                                    Budget: <span className="text-slate-900">${project.budget.toLocaleString()}</span>
+                                                    Budget: <span className="text-slate-900">
+                                                        {project.isRevenueBased ? 'Revenue Split Only' : `$${project.budget.toLocaleString()}`}
+                                                    </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Users className="h-4 w-4 text-primary-600" />

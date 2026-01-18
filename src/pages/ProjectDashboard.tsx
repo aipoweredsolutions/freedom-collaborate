@@ -130,7 +130,8 @@ const mockProjects = [
         id: '8',
         title: 'Global Artisan Collective (Etsy Partnership)',
         description: 'Seek a US-based partner to launch and manage an Etsy storefront for handcrafted designs. Seeking long-term 5-year partnership.',
-        budget: 12000,
+        budget: 0,
+        isRevenueBased: true,
         status: 'open',
         type: 'Startup',
         roles: [
@@ -292,7 +293,9 @@ export function ProjectDashboard() {
                                     <div className="flex items-center gap-6 text-sm">
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <DollarSign className="h-4 w-4" />
-                                            <span className="font-semibold text-slate-900">${project.budget.toLocaleString()}</span>
+                                            <span className="font-semibold text-slate-900">
+                                                {project.isRevenueBased ? 'Revenue Spread' : `$${project.budget.toLocaleString()}`}
+                                            </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <Calendar className="h-4 w-4" />
