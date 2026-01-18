@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -169,6 +170,140 @@ const mockProjectDetails: Record<string, Project> = {
             type: 'fixed-term',
             term: 60
         }
+    },
+    '2': {
+        id: '2',
+        title: 'HealthTech Hackathon Prep',
+        description: 'Join a 48-hour sprint to build a patient monitoring dashboard. We need a fast-paced team to build a HIPAA-compliant interface for tracking essential patient metrics in real-time.',
+        budget: 5000,
+        status: 'open',
+        type: 'Hackathon',
+        roles: [
+            { title: 'Full Stack Developer', split: 40, filled: false, description: 'End-to-end prototype build using React and Node.', requirements: ['React', 'Node.js', 'WebSockets'] },
+            { title: 'Medical Research & Legal', split: 30, filled: false, description: 'Ensuring compliance with healthcare regulations.', requirements: ['HIPAA Knowledge', 'Medical Research'] },
+            { title: 'Marketing & Pitch Specialist', split: 30, filled: false, description: 'Creating the presentation and storytelling.', requirements: ['Public Speaking', 'Pitch Deck Design'] }
+        ],
+        deadline: '2026-02-28',
+        applicants: 24,
+        category: 'Health',
+        location: 'Virtual',
+        createdBy: { name: 'David Kim', avatar: 'DK', reputation: 4.9, projectsCompleted: 1 },
+        timeline: [
+            { phase: 'Team Formation', duration: '2 days', status: 'completed' },
+            { phase: 'Sprint Part 1', duration: '24 hours', status: 'pending' },
+            { phase: 'Sprint Part 2', duration: '24 hours', status: 'pending' }
+        ]
+    },
+    '3': {
+        id: '3',
+        title: 'Mobile Fitness App',
+        description: 'A social-first fitness app focused on community-driven workouts and AI-personalized training plans.',
+        budget: 20000,
+        status: 'open',
+        type: 'Startup',
+        roles: [
+            { title: 'Mobile Developer', split: 35, filled: false, description: 'React Native expert.', requirements: ['React Native', 'Firebase'] },
+            { title: 'Community Manager', split: 20, filled: false, description: 'Manage social engagement.', requirements: ['Social Media', 'Community Growth'] },
+            { title: 'Content Creator', split: 25, filled: false, description: 'Video production and social content.', requirements: ['Video Editing', 'Content Strategy'] },
+            { title: 'Partnerships', split: 20, filled: false, description: 'B2B outreach to gyms.', requirements: ['Sales', 'Negotiation'] }
+        ],
+        deadline: '2026-05-20',
+        applicants: 15,
+        category: 'Mobile',
+        location: 'Remote',
+        createdBy: { name: 'Alex Chen', avatar: 'AC', reputation: 4.7, projectsCompleted: 5 },
+        timeline: [
+            { phase: 'Design Phase', duration: '3 weeks', status: 'in-progress' },
+            { phase: 'Alpha Release', duration: '2 months', status: 'pending' }
+        ]
+    },
+    '4': {
+        id: '4',
+        title: 'Blockchain Analytics Dashboard',
+        description: 'Enterprise-grade analytics for institutional blockchain transparency.',
+        budget: 30000,
+        status: 'open',
+        type: 'Enterprise',
+        roles: [
+            { title: 'Blockchain Architect', split: 30, filled: false, description: 'Smart contract development.', requirements: ['Solidity', 'Rust'] },
+            { title: 'Data Analyst', split: 25, filled: false, description: 'Chain indexing and patterns.', requirements: ['SQL', 'Python'] },
+            { title: 'Sales Lead', split: 25, filled: false, description: 'Corporate sales.', requirements: ['Enterprise Sales'] },
+            { title: 'Legal Counsel', split: 20, filled: false, description: 'Compliance.', requirements: ['Web3 Law'] }
+        ],
+        deadline: '2026-06-10',
+        applicants: 6,
+        category: 'Web3',
+        location: 'Hybrid / Berlin',
+        createdBy: { name: 'Marcus Thorne', avatar: 'MT', reputation: 4.9, projectsCompleted: 0 },
+        timeline: [
+            { phase: 'Protocol Analysis', duration: '4 weeks', status: 'pending' }
+        ]
+    },
+    '5': {
+        id: '5',
+        title: 'Eco-Commerce Marketplace',
+        description: 'Building the future of sustainable shopping.',
+        budget: 25000,
+        status: 'open',
+        type: 'Startup',
+        roles: [
+            { title: 'Full Stack Engineer', split: 35, filled: false, description: 'Core build.', requirements: ['Next.js', 'Typescript'] },
+            { title: 'Sustainability Expert', split: 20, filled: false, description: 'Brand vetting.', requirements: ['Environmental Science'] },
+            { title: 'Growth Strategist', split: 25, filled: false, description: 'User acquisition.', requirements: ['SEO', 'Ads'] },
+            { title: 'Logistics Lead', split: 20, filled: false, description: 'fulfillment.', requirements: ['Supply Chain'] }
+        ],
+        deadline: '2026-07-22',
+        applicants: 8,
+        category: 'E-Commerce',
+        location: 'New York / Remote',
+        createdBy: { name: 'Elena Vance', avatar: 'EV', reputation: 4.8, projectsCompleted: 2 },
+        timeline: [
+            { phase: 'Concept', duration: '2 weeks', status: 'completed' }
+        ]
+    },
+    '6': {
+        id: '6',
+        title: 'Immersive VR Language School',
+        description: 'VR-based language immersion with AI-powered conversation partners.',
+        budget: 45000,
+        status: 'open',
+        type: 'Enterprise',
+        roles: [
+            { title: 'Unity Developer', split: 30, filled: false, description: 'XR development.', requirements: ['Unity', 'C#'] },
+            { title: 'AI Specialist', split: 25, filled: false, description: 'LLM integration.', requirements: ['OpenAI', 'Python'] },
+            { title: 'Curriculum Designer', split: 20, filled: false, description: 'Language pedagogy.', requirements: ['Linguistics'] },
+            { title: 'Sound Designer', split: 25, filled: false, description: 'Spatial audio.', requirements: ['Audio Engineering'] }
+        ],
+        deadline: '2026-09-05',
+        applicants: 4,
+        category: 'EdTech',
+        location: 'Remote',
+        createdBy: { name: 'Sofia Rodriguez', avatar: 'SR', reputation: 4.8, projectsCompleted: 0 },
+        timeline: [
+            { phase: 'Prototype', duration: '8 weeks', status: 'pending' }
+        ]
+    },
+    '7': {
+        id: '7',
+        title: 'Micro-Credit DeFi Portal',
+        description: 'Crypto-based peer-to-peer micro-lending for underserved markets.',
+        budget: 40000,
+        status: 'open',
+        type: 'Startup',
+        roles: [
+            { title: 'Smart Contract Lead', split: 35, filled: false, description: 'Safe protocols.', requirements: ['Solidity'] },
+            { title: 'Mobile Engineer', split: 25, filled: false, description: 'Lightweight UI.', requirements: ['Flutter'] },
+            { title: 'Risk Analyst', split: 20, filled: false, description: 'Credit scoring.', requirements: ['Data Science'] },
+            { title: 'Market Manager', split: 20, filled: false, description: 'Local ops.', requirements: ['Partnerships'] }
+        ],
+        deadline: '2026-08-15',
+        applicants: 19,
+        category: 'DeFi',
+        location: 'Lagos / Nairobi / Remote',
+        createdBy: { name: 'Kofi Mensah', avatar: 'KM', reputation: 4.9, projectsCompleted: 0 },
+        timeline: [
+            { phase: 'MVP Development', duration: '12 weeks', status: 'pending' }
+        ]
     }
 };
 
@@ -375,7 +510,7 @@ export function ProjectDetails() {
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700">
-                                        {project.roles.map((role, idx) => (
+                                        {project.roles.map((role: any, idx: number) => (
                                             <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <span className="text-sm font-medium text-slate-300">{role.title}</span>
@@ -399,7 +534,7 @@ export function ProjectDetails() {
                             <CardHeader>
                                 <CardTitle>Open Roles & Revenue Split</CardTitle>
                                 <CardDescription>
-                                    {project.roles.filter((r) => !r.filled).length} positions available
+                                    {project.roles.filter((r: any) => !r.filled).length} positions available
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -407,20 +542,30 @@ export function ProjectDetails() {
                                 <div className="bg-slate-50 rounded-lg p-4">
                                     <p className="text-sm font-medium text-slate-700 mb-3">Revenue Distribution</p>
                                     <div className="flex h-3 rounded-full overflow-hidden bg-slate-200 mb-3">
-                                        {project.roles.map((role, idx) => (
+                                        <div
+                                            style={{ width: '5%' }}
+                                            className="h-full bg-slate-900"
+                                            title="Platform Fee: 5%"
+                                        />
+                                        {project.roles.map((role: any, idx: number) => (
                                             <div
                                                 key={idx}
-                                                style={{ width: `${role.split}%` }}
+                                                style={{ width: `${role.split * 0.95}%` }}
                                                 className={`h-full ${idx === 0 ? 'bg-primary-500' :
                                                     idx === 1 ? 'bg-blue-500' :
                                                         idx === 2 ? 'bg-green-500' :
                                                             'bg-yellow-500'}`}
-                                                title={`${role.title}: ${role.split}%`}
+                                                title={`${role.title}: ${role.split}% (of net)`}
                                             />
                                         ))}
                                     </div>
                                     <div className="grid grid-cols-2 gap-2 text-xs">
-                                        {project.roles.map((role, idx) => (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-slate-900" />
+                                            <span className="text-slate-600 truncate">Platform Fee</span>
+                                            <span className="text-slate-900 font-semibold italic">5%*</span>
+                                        </div>
+                                        {project.roles.map((role: any, idx: number) => (
                                             <div key={idx} className="flex items-center gap-2">
                                                 <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-primary-500' :
                                                     idx === 1 ? 'bg-blue-500' :
@@ -431,9 +576,10 @@ export function ProjectDetails() {
                                             </div>
                                         ))}
                                     </div>
+                                    <p className="text-[10px] text-slate-400 mt-2 italic">*Platform fee is negotiable for high-impact projects.</p>
                                 </div>
 
-                                {project.roles.map((role, index) => (
+                                {project.roles.map((role: any, index: number) => (
                                     <div
                                         key={index}
                                         className={`p-4 rounded-lg border-2 ${role.filled ? 'bg-slate-50 border-slate-200' : 'bg-white border-primary-200'}`}
@@ -456,7 +602,7 @@ export function ProjectDetails() {
                                         </div>
                                         {role.requirements && (
                                             <div className="flex flex-wrap gap-1 mt-2">
-                                                {role.requirements.map((req, idx) => (
+                                                {role.requirements.map((req: any, idx: number) => (
                                                     <Badge key={idx} variant="outline" className="text-[10px]">{req}</Badge>
                                                 ))}
                                             </div>
@@ -474,7 +620,7 @@ export function ProjectDetails() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {project.timeline.map((phase, index) => (
+                                    {project.timeline.map((phase: any, index: number) => (
                                         <div key={index} className="flex items-start gap-4">
                                             <div className="mt-1">
                                                 {phase.status === 'completed' ? (
@@ -516,24 +662,24 @@ export function ProjectDetails() {
 
                     {/* Sidebar */}
                     <div className="space-y-6">
-                        {/* Escrow Vault */}
+                        {/* Financial Oversight */}
                         <Card className="bg-slate-900 text-white overflow-hidden relative border-none shadow-xl">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <ShieldCheck className="h-24 w-24" />
+                                <DollarSign className="h-24 w-24" />
                             </div>
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-base flex items-center gap-2">
                                     <ShieldCheck className="h-4 w-4 text-primary-400" />
-                                    Escrow Vault
+                                    Financial Oversight
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                                    <p className="text-[10px] uppercase text-slate-400 mb-1">Vault Balance</p>
+                                    <p className="text-[10px] uppercase text-slate-400 mb-1">Escrowed / Distributed</p>
                                     <p className="text-2xl font-bold">
                                         {project.isRevenueBased
-                                            ? `$${project.timeline.reduce((acc, p) => acc + (p.payout || 0), 0).toLocaleString()}`
-                                            : `$${(project.budget - project.timeline.reduce((acc, p) => acc + (p.payout || 0), 0)).toLocaleString()}`}
+                                            ? `$${project.timeline.reduce((acc: number, p: any) => acc + (p.payout || 0), 0).toLocaleString()}`
+                                            : `$${project.budget.toLocaleString()}`}
                                     </p>
                                 </div>
                                 <Button
@@ -542,8 +688,11 @@ export function ProjectDetails() {
                                     onClick={() => navigate(`/projects/${id}/finance`)}
                                 >
                                     <Activity className="h-3 w-3" />
-                                    Financial Transparency
+                                    View Full Transparency Report
                                 </Button>
+                                <p className="text-[10px] text-slate-400 text-center italic">
+                                    Funds are managed via automated platform smart-contracts.
+                                </p>
                             </CardContent>
                         </Card>
 
@@ -563,10 +712,16 @@ export function ProjectDetails() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <p className="text-xs font-bold text-slate-500 uppercase">Revenue Model</p>
+                                    <p className="text-xs font-bold text-slate-500 uppercase">Revenue Model & Fees</p>
                                     <div className="p-3 bg-slate-50 rounded border border-slate-100 text-sm">
-                                        {project.revenueSharing?.type === 'fixed-term' ? `${project.revenueSharing.term} Month Term` : 'Standard Split'}
-                                        <p className="text-slate-500 text-[10px] mt-1 italic">Verified by Platform</p>
+                                        <p className="font-medium text-slate-900">
+                                            {project.revenueSharing?.type === 'fixed-term' ? `${project.revenueSharing.term} Month Term` : 'Standard Split'}
+                                        </p>
+                                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200">
+                                            <span className="text-xs text-slate-500">Platform Fee</span>
+                                            <span className="text-xs font-bold text-primary-600">5.0% (Negotiable)</span>
+                                        </div>
+                                        <p className="text-slate-500 text-[10px] mt-1 italic">Automated Distribution Enabled</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -624,7 +779,7 @@ export function ProjectDetails() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-slate-500">Role Status</span>
-                                    <span className="font-bold text-primary-600">{project.roles.filter((r) => !r.filled).length} Open</span>
+                                    <span className="font-bold text-primary-600">{project.roles.filter((r: any) => !r.filled).length} Open</span>
                                 </div>
                             </CardContent>
                         </Card>

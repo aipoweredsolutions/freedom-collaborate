@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 
 const mockFinancialsByProject: Record<string, any> = {
     '1': {
+        projectTitle: 'AI-Powered Task Manager',
         totalRevenue: 125430,
         platformFees: 6271.50,
         netDistributed: 119158.50,
@@ -33,7 +34,74 @@ const mockFinancialsByProject: Record<string, any> = {
             { phase: 'Market Launch', revenue: 65430, date: 'May 2026' },
         ]
     },
+    '2': {
+        projectTitle: 'HealthTech Hackathon Prep',
+        totalRevenue: 0,
+        platformFees: 0,
+        netDistributed: 0,
+        payoutHistory: [],
+        milestoneEarnings: [
+            { phase: 'Prototype Sprint', revenue: 0, date: 'Pending' }
+        ]
+    },
+    '3': {
+        projectTitle: 'Mobile Fitness App',
+        totalRevenue: 5000,
+        platformFees: 250,
+        netDistributed: 4750,
+        payoutHistory: [
+            { id: 'tx3-1', member: 'Alex Chen', amount: 2000, role: 'Creator', date: '2026-01-10', status: 'delivered' }
+        ],
+        milestoneEarnings: [
+            { phase: 'Design Phase', revenue: 5000, date: 'Jan 2026' }
+        ]
+    },
+    '4': {
+        projectTitle: 'Blockchain Analytics Dashboard',
+        totalRevenue: 15000,
+        platformFees: 750,
+        netDistributed: 14250,
+        payoutHistory: [
+            { id: 'tx4-1', member: 'Platform (Trust Fee)', amount: 750, role: 'Escrow Fee', date: '2026-01-12', status: 'completed' }
+        ],
+        milestoneEarnings: [
+            { phase: 'Initial Research', revenue: 15000, date: 'Jan 2026' }
+        ]
+    },
+    '5': {
+        projectTitle: 'Eco-Commerce Marketplace',
+        totalRevenue: 2500,
+        platformFees: 125,
+        netDistributed: 2375,
+        payoutHistory: [],
+        milestoneEarnings: [
+            { phase: 'Concept Polish', revenue: 2500, date: 'Jan 2026' }
+        ]
+    },
+    '6': {
+        projectTitle: 'Immersive VR Language School',
+        totalRevenue: 0,
+        platformFees: 0,
+        netDistributed: 0,
+        payoutHistory: [],
+        milestoneEarnings: [
+            { phase: 'Initial Prototype', revenue: 0, date: 'Pending' }
+        ]
+    },
+    '7': {
+        projectTitle: 'Micro-Credit DeFi Portal',
+        totalRevenue: 10000,
+        platformFees: 500,
+        netDistributed: 9500,
+        payoutHistory: [
+            { id: 'tx7-1', member: 'Platform (Trust Fee)', amount: 500, role: 'Escrow Fee', date: '2026-01-05', status: 'completed' }
+        ],
+        milestoneEarnings: [
+            { phase: 'Market Entry Research', revenue: 10000, date: 'Dec 2025' }
+        ]
+    },
     '8': {
+        projectTitle: 'Global Artisan Collective',
         totalRevenue: 0,
         platformFees: 0,
         netDistributed: 0,
@@ -63,8 +131,8 @@ export function ProjectFinance() {
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                         <div>
-                            <h1 className="text-xl font-bold text-slate-900">Financial Transparency Report</h1>
-                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Project ID: {id || '8'} • Real-time Audit</p>
+                            <h1 className="text-xl font-bold text-slate-900">{projectData.projectTitle}</h1>
+                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Project ID: {id || '8'} • Financial Audit</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -106,7 +174,7 @@ export function ProjectFinance() {
                         <CardContent>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-4xl font-bold text-slate-900">${projectData.platformFees.toLocaleString()}</span>
-                                <span className="text-slate-400 text-sm font-medium">5% Fixed Rate</span>
+                                <span className="text-slate-400 text-sm font-medium">5% Rate (Negotiable)</span>
                             </div>
                             <p className="text-xs text-slate-500 mt-2">Fees for contract protection and distribution services</p>
                         </CardContent>

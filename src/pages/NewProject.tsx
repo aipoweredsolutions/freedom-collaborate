@@ -568,6 +568,10 @@ export function NewProject() {
                                                 {revenueSharingDuration === 'fixed-term' && `${revenueSharingTerm} Months Fixed Term`}
                                                 {revenueSharingDuration === 'ongoing' && 'Ongoing Collaborative Distribution'}
                                             </p>
+                                            <div className="mt-2 border-t border-slate-200 pt-2 flex justify-between">
+                                                <span className="text-[10px] text-slate-400">Platform Fee</span>
+                                                <span className="text-[10px] font-bold text-primary-600">5% (Negotiable)</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
