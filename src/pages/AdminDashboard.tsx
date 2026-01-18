@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     CheckCircle,
     XCircle,
@@ -74,18 +74,42 @@ const recentTransactions = [
 ];
 
 export function AdminDashboard() {
-    const [pendingProjects, setPendingProjects] = useState(initialPendingProjects);
+    const [pendingProjects, setPendingProjects] = useState<any[]>([]);
     const [pendingUsers, setPendingUsers] = useState(initialPendingUsers);
     const [pendingPayouts, setPendingPayouts] = useState(initialPendingPayouts);
 
+    useEffect(() => {
+        // Load from localStorage on mount
+        const storedPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+        setPendingProjects([...initialPendingProjects, ...storedPending]);
+    }, []);
+
     const handleApprove = (id: string, type: 'project' | 'user' | 'payout') => {
-        if (type === 'project') setPendingProjects(pendingProjects.filter(p => p.id !== id));
+        if (type === 'project') {
+            const updated = pendingProjects.filter(p => p.id !== id);
+            setPendingProjects(updated);
+
+            // Also update localStorage for user-submitted projects
+            const storedPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+            const filteredStored = storedPending.filter((p: any) => p.id !== id);
+            localStorage.setItem('pendingProjects', JSON.stringify(filteredStored));
+
+            // In a real app, you would add this to an 'approvedProjects' list
+        }
         if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
         if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
     };
 
     const handleReject = (id: string, type: 'project' | 'user' | 'payout') => {
-        if (type === 'project') setPendingProjects(pendingProjects.filter(p => p.id !== id));
+        if (type === 'project') {
+            const updated = pendingProjects.filter(p => p.id !== id);
+            setPendingProjects(updated);
+
+            // Also update localStorage
+            const storedPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+            const filteredStored = storedPending.filter((p: any) => p.id !== id);
+            localStorage.setItem('pendingProjects', JSON.stringify(filteredStored));
+        }
         if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
         if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
     };

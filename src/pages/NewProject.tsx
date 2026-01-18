@@ -56,19 +56,24 @@ export function NewProject() {
     };
 
     const handleSubmit = () => {
-        // Here you would typically send the data to your backend
-        console.log({
-            projectTitle,
-            projectDescription,
-            budget,
-            deadline,
-            category,
-            projectType,
-            roles
-        });
+        const newProject = {
+            id: 'p-' + Date.now(),
+            title: projectTitle,
+            creator: 'Demo User', // In a real app, this would be the logged-in user
+            budget: Number(budget),
+            type: projectType,
+            rolesCount: roles.length,
+            description: projectDescription,
+            submittedDate: new Date().toISOString().split('T')[0],
+            roles: roles // Storing roles for detailed review
+        };
+
+        // Get existing pending projects from localStorage
+        const existingPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+        localStorage.setItem('pendingProjects', JSON.stringify([...existingPending, newProject]));
 
         // Mock success feedback
-        alert("Project successfully created! Redirecting to dashboard...");
+        alert("Success! Your project has been submitted for admin approval. You will be notified once it is reviewed.");
 
         // Navigate back to projects dashboard
         navigate('/projects');
