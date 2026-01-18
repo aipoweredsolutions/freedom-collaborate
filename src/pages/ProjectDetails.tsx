@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, DollarSign, Calendar, Users, MapPin, TrendingUp, CheckCircle, Clock, Lock, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, DollarSign, Calendar, Users, MapPin, TrendingUp, CheckCircle, Clock, Lock, ShieldCheck, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -974,7 +974,15 @@ export function ProjectDetails() {
                                 >
                                     {hasApplied ? "Application Sent" : "Apply Now"}
                                 </Button>
-                                <Button variant="outline" className="w-full">
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-primary-200 text-primary-700 hover:bg-primary-50 gap-2"
+                                    onClick={() => navigate(`/projects/${id}/huddle`)}
+                                >
+                                    <MessageCircle className="h-4 w-4" />
+                                    Negotiate Terms (The Huddle)
+                                </Button>
+                                <Button variant="ghost" className="w-full text-slate-500">
                                     Save for Later
                                 </Button>
                             </CardContent>

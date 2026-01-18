@@ -10,7 +10,8 @@ import {
     ShieldCheck,
     Clock,
     UserCheck,
-    Wallet
+    Wallet,
+    MessageCircle
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -145,6 +146,13 @@ export function AdminDashboard() {
                         </h1>
                         <p className="mt-2 text-slate-600 font-medium">Platform Curation & Financial Oversight</p>
                     </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <StatCard title="Pending Approvals" value={(pendingProjects.length + pendingUsers.length).toString()} icon={<Clock className="h-4 w-4" />} trend="High volume" />
+                    <StatCard title="Active Huddles" value="14" icon={<MessageCircle className="h-4 w-4" />} trend="9 focus on revenue-share" />
+                    <StatCard title="Total Escrow" value="$142,500" icon={<ShieldCheck className="h-4 w-4" />} trend="Global safety pool" />
+                    <StatCard title="Total Payouts" value="$52,400" icon={<CreditCard className="h-4 w-4" />} trend="+12% from last week" />
                 </div>
 
                 <Tabs defaultValue="projects" className="space-y-6">
