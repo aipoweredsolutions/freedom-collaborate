@@ -7,7 +7,11 @@ import {
     CreditCard,
     Activity,
     AlertCircle,
-    Users
+    Users,
+    ShieldCheck,
+    Clock,
+    UserCheck,
+    Wallet
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,27 +49,20 @@ const initialPendingProjects = [
         rolesCount: 6,
         description: 'Automating regulatory compliance for small law firms.',
         submittedDate: '2026-01-17'
-    },
-    {
-        id: 'p4',
-        title: 'AI Video Upscaler',
-        creator: 'Visionary Labs',
-        budget: 35000,
-        type: 'Startup',
-        rolesCount: 4,
-        description: 'Using Generative AI to upscale legacy video content for streaming platforms.',
-        submittedDate: '2026-01-17'
-    },
-    {
-        id: 'p5',
-        title: 'Solar Energy Grid Monitor',
-        creator: 'Helios Systems',
-        budget: 60000,
-        type: 'Enterprise',
-        rolesCount: 7,
-        description: 'IoT platform for managing community solar grids and surplus distribution.',
-        submittedDate: '2026-01-18'
     }
+];
+
+// Mock Data for Pending Users
+const initialPendingUsers = [
+    { id: 'u1', name: 'James Wilson', role: 'Full Stack Dev', bio: 'Ex-Google engineer looking for high-impact social projects.', joinedDate: '2026-01-17', skills: ['React', 'Rust'] },
+    { id: 'u2', name: 'Elena Vance', role: 'Product Designer', bio: 'Specializing in VR interfaces and immersive experiences.', joinedDate: '2026-01-18', skills: ['Figma', 'Unity'] },
+    { id: 'u3', name: 'Marcus Thorne', role: 'Growth Lead', bio: 'Scaled 3 startups from 0 to 1M users.', joinedDate: '2026-01-18', skills: ['Marketing', 'SEO'] },
+];
+
+// Mock Data for Pending Payouts
+const initialPendingPayouts = [
+    { id: 'py1', project: 'AI Task Manager', user: 'Sarah Johnson', amount: 2500, type: 'Milestone 2', date: '2026-01-18' },
+    { id: 'py2', project: 'Fitness App', user: 'David Kim', amount: 1200, type: 'Weekly Payout', date: '2026-01-18' },
 ];
 
 // Mock Data for Payments
@@ -78,45 +75,64 @@ const recentTransactions = [
 
 export function AdminDashboard() {
     const [pendingProjects, setPendingProjects] = useState(initialPendingProjects);
+    const [pendingUsers, setPendingUsers] = useState(initialPendingUsers);
+    const [pendingPayouts, setPendingPayouts] = useState(initialPendingPayouts);
 
-    const handleApprove = (id: string) => {
-        setPendingProjects(pendingProjects.filter(p => p.id !== id));
-        // In a real app, you would make an API call here
+    const handleApprove = (id: string, type: 'project' | 'user' | 'payout') => {
+        if (type === 'project') setPendingProjects(pendingProjects.filter(p => p.id !== id));
+        if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
+        if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
     };
 
-    const handleReject = (id: string) => {
-        setPendingProjects(pendingProjects.filter(p => p.id !== id));
-        // In a real app, you would make an API call here
+    const handleReject = (id: string, type: 'project' | 'user' | 'payout') => {
+        if (type === 'project') setPendingProjects(pendingProjects.filter(p => p.id !== id));
+        if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
+        if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
     };
 
     return (
         <div className="min-h-screen bg-slate-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-                    <p className="mt-2 text-slate-600">Manage project approvals and monitor platform revenue.</p>
+                <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                            <ShieldCheck className="h-8 w-8 text-primary-600" />
+                            Admin Control Center
+                        </h1>
+                        <p className="mt-2 text-slate-600 font-medium">Platform Curation & Financial Oversight</p>
+                    </div>
                 </div>
 
-                <Tabs defaultValue="approvals" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-                        <TabsTrigger value="approvals">Project Approvals</TabsTrigger>
-                        <TabsTrigger value="payments">Revenue & Payments</TabsTrigger>
-                    </TabsList>
+                <Tabs defaultValue="projects" className="space-y-6">
+                    <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm inline-flex">
+                        <TabsList className="bg-transparent border-none">
+                            <TabsTrigger value="projects" className="gap-2">
+                                <Clock className="h-4 w-4" />
+                                Projects ({pendingProjects.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="users" className="gap-2">
+                                <UserCheck className="h-4 w-4" />
+                                Users ({pendingUsers.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="payouts" className="gap-2">
+                                <Wallet className="h-4 w-4" />
+                                Payouts ({pendingPayouts.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="revenue" className="gap-2">
+                                <Activity className="h-4 w-4" />
+                                Revenue
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
 
                     {/* Project Approvals Tab */}
-                    <TabsContent value="approvals" className="space-y-6">
+                    <TabsContent value="projects" className="space-y-6">
                         <div className="grid gap-6">
                             {pendingProjects.length === 0 ? (
-                                <Card>
-                                    <CardContent className="flex flex-col items-center justify-center h-48">
-                                        <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                                        <p className="text-lg font-medium text-slate-900">All caught up!</p>
-                                        <p className="text-slate-500">No pending project approvals.</p>
-                                    </CardContent>
-                                </Card>
+                                <EmptyState title="No pending projects" />
                             ) : (
                                 pendingProjects.map((project) => (
-                                    <Card key={project.id}>
+                                    <Card key={project.id} className="border-l-4 border-l-yellow-400">
                                         <CardHeader>
                                             <div className="flex items-start justify-between">
                                                 <div>
@@ -124,33 +140,34 @@ export function AdminDashboard() {
                                                     <CardDescription>Submitted by {project.creator} on {project.submittedDate}</CardDescription>
                                                 </div>
                                                 <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-                                                    Pending Review
+                                                    Needs Review
                                                 </Badge>
                                             </div>
                                         </CardHeader>
                                         <CardContent>
                                             <p className="text-slate-600 mb-4">{project.description}</p>
-                                            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 mb-6">
+                                            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 mb-6 font-medium">
                                                 <div className="flex items-center gap-2">
                                                     <DollarSign className="h-4 w-4 text-green-600" />
-                                                    Budget: <span className="font-medium text-slate-900">${project.budget.toLocaleString()}</span>
+                                                    Budget: <span className="text-slate-900">${project.budget.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Users className="h-4 w-4 text-blue-600" />
-                                                    Roles: <span className="font-medium text-slate-900">{project.rolesCount}</span>
+                                                    <Users className="h-4 w-4 text-primary-600" />
+                                                    Required Roles: <span className="text-slate-900">{project.rolesCount}</span>
                                                 </div>
                                             </div>
                                             <div className="flex gap-3">
                                                 <Button
-                                                    onClick={() => handleApprove(project.id)}
-                                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                                    onClick={() => handleApprove(project.id, 'project')}
+                                                    className="bg-green-600 hover:bg-green-700 text-white min-w-[140px]"
                                                 >
                                                     <CheckCircle className="mr-2 h-4 w-4" />
                                                     Approve Project
                                                 </Button>
                                                 <Button
-                                                    variant="destructive"
-                                                    onClick={() => handleReject(project.id)}
+                                                    variant="outline"
+                                                    onClick={() => handleReject(project.id, 'project')}
+                                                    className="text-red-600 border-red-200 hover:bg-red-50"
                                                 >
                                                     <XCircle className="mr-2 h-4 w-4" />
                                                     Reject
@@ -163,63 +180,109 @@ export function AdminDashboard() {
                         </div>
                     </TabsContent>
 
-                    {/* Payments Tab */}
-                    <TabsContent value="payments" className="space-y-6">
-                        {/* Stats Overview */}
+                    {/* User Approvals Tab */}
+                    <TabsContent value="users" className="space-y-6">
+                        <div className="grid gap-6">
+                            {pendingUsers.length === 0 ? (
+                                <EmptyState title="No pending user verifications" />
+                            ) : (
+                                pendingUsers.map((user) => (
+                                    <Card key={user.id} className="border-l-4 border-l-blue-400">
+                                        <CardContent className="pt-6">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                                <div className="flex items-start gap-4">
+                                                    <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-900">
+                                                        {user.name.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-bold text-slate-900 text-lg">{user.name}</h3>
+                                                        <p className="text-sm font-semibold text-primary-600">{user.role}</p>
+                                                        <p className="text-sm text-slate-500 mt-1 max-w-md">{user.bio}</p>
+                                                        <div className="flex flex-wrap gap-2 mt-3">
+                                                            {user.skills.map(s => <Badge key={s} variant="secondary">{s}</Badge>)}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button onClick={() => handleApprove(user.id, 'user')} className="bg-green-600 hover:bg-green-700 text-white">
+                                                        Verify User
+                                                    </Button>
+                                                    <Button variant="outline" onClick={() => handleReject(user.id, 'user')} className="text-red-500">
+                                                        Decline
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))
+                            )}
+                        </div>
+                    </TabsContent>
+
+                    {/* Payout Approvals Tab */}
+                    <TabsContent value="payouts" className="space-y-6">
+                        <div className="grid gap-6">
+                            {pendingPayouts.length === 0 ? (
+                                <EmptyState title="No pending payouts" />
+                            ) : (
+                                pendingPayouts.map((py) => (
+                                    <Card key={py.id} className="border-l-4 border-l-emerald-400">
+                                        <CardContent className="pt-6">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
+                                                        <DollarSign className="h-6 w-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-900">${py.amount.toLocaleString()}</p>
+                                                        <p className="text-sm text-slate-500 font-medium">{py.type} for <span className="text-primary-600">{py.project}</span></p>
+                                                        <p className="text-xs text-slate-400">Payee: {py.user} • Requested: {py.date}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button onClick={() => handleApprove(py.id, 'payout')} className="bg-green-600 hover:bg-green-700 text-white">
+                                                        Release Funds
+                                                    </Button>
+                                                    <Button variant="outline" onClick={() => handleReject(py.id, 'payout')} className="text-orange-600 border-orange-200">
+                                                        Hold for Review
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))
+                            )}
+                        </div>
+                    </TabsContent>
+
+                    {/* Revenue Tab (Existing) */}
+                    <TabsContent value="revenue" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                                    <DollarSign className="h-4 w-4 text-slate-500" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">$45,231.89</div>
-                                    <p className="text-xs text-slate-500 max-w-[200px]">+20.1% from last month</p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Platform Fees</CardTitle>
-                                    <TrendingUp className="h-4 w-4 text-slate-500" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">$2,350.00</div>
-                                    <p className="text-xs text-slate-500">+15% from last month</p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Active Splits</CardTitle>
-                                    <Activity className="h-4 w-4 text-slate-500" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">12</div>
-                                    <p className="text-xs text-slate-500">Projects currently distributing revenue</p>
-                                </CardContent>
-                            </Card>
+                            <StatCard title="Total Platform Revenue" value="$45,231.89" icon={<DollarSign className="h-4 w-4" />} trend="+20.1% this month" />
+                            <StatCard title="Net Platform Fees" value="$2,350.00" icon={<TrendingUp className="h-4 w-4" />} trend="+15% this month" />
+                            <StatCard title="Active Revenue Splits" value="12" icon={<Activity className="h-4 w-4" />} trend="Across 4 categories" />
                         </div>
 
-                        {/* Recent Transactions */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Recent Transactions</CardTitle>
-                                <CardDescription>Latest financial activity across the platform.</CardDescription>
+                                <CardTitle>Recent Marketplace Activity</CardTitle>
+                                <CardDescription>Successful payouts and platform fee collections.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
                                     {recentTransactions.map((tx) => (
-                                        <div key={tx.id} className="flex items-center justify-between p-4 border border-slate-100 rounded-lg bg-white">
+                                        <div key={tx.id} className="flex items-center justify-between p-4 border border-slate-100 rounded-xl bg-white hover:bg-slate-50 transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center">
                                                     <CreditCard className="h-5 w-5 text-slate-600" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium text-slate-900">{tx.project}</p>
-                                                    <p className="text-sm text-slate-500">{tx.type} • {tx.date}</p>
+                                                    <p className="font-bold text-slate-900">{tx.project}</p>
+                                                    <p className="text-sm text-slate-500 font-medium">{tx.type} • {tx.date}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-bold text-slate-900">${tx.amount.toLocaleString()}</p>
+                                                <p className="font-bold text-slate-900 text-lg">${tx.amount.toLocaleString()}</p>
                                                 <Badge variant={tx.status === 'completed' ? 'success' : 'warning'} className="mt-1">
                                                     {tx.status}
                                                 </Badge>
@@ -229,20 +292,40 @@ export function AdminDashboard() {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* Revenue Split Alert */}
-                        <Card className="bg-blue-50 border-blue-200">
-                            <CardContent className="flex items-center gap-4 p-4">
-                                <AlertCircle className="h-6 w-6 text-blue-600" />
-                                <div>
-                                    <h4 className="font-semibold text-blue-900">Platform Split Active</h4>
-                                    <p className="text-sm text-blue-700">The platform automatically takes a 5% fee from all processed payments to maintain operations.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
                     </TabsContent>
                 </Tabs>
             </div>
         </div>
     );
 }
+
+function StatCard({ title, value, icon, trend }: { title: string; value: string; icon: React.ReactNode; trend: string }) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{title}</CardTitle>
+                <div className="p-2 bg-slate-50 rounded-lg">{icon}</div>
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold text-slate-900">{value}</div>
+                <p className="text-xs text-green-600 font-semibold mt-1 flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    {trend}
+                </p>
+            </CardContent>
+        </Card>
+    );
+}
+
+function EmptyState({ title }: { title: string }) {
+    return (
+        <Card>
+            <CardContent className="flex flex-col items-center justify-center h-64">
+                <CheckCircle className="h-16 w-16 text-green-500 mb-4 opacity-20" />
+                <p className="text-xl font-bold text-slate-900">{title}</p>
+                <p className="text-slate-500 font-medium mt-1">Platform is running smoothly.</p>
+            </CardContent>
+        </Card>
+    );
+}
+
