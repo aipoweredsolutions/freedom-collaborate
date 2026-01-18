@@ -142,6 +142,8 @@ export function AdminDashboard() {
         handleApprove(id, type); // For now, just remove from list
     };
 
+    const [activeTab, setActiveTab] = useState('projects');
+
     return (
         <div className="min-h-screen bg-slate-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -187,7 +189,7 @@ export function AdminDashboard() {
                     />
                 </div>
 
-                <Tabs defaultValue="projects" className="space-y-6">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="bg-white border border-slate-200">
                         <TabsTrigger value="projects" className="data-[state=active]:bg-primary-50">Pending Projects ({pendingProjects.length})</TabsTrigger>
                         <TabsTrigger value="users" className="data-[state=active]:bg-primary-50">Verify Identity ({pendingUsers.length})</TabsTrigger>
