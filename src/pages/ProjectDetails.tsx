@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, DollarSign, Calendar, Users, MapPin, TrendingUp } from 'lucide-react';
+import { ArrowLeft, DollarSign, Calendar, Users, MapPin, TrendingUp, CheckCircle, Clock, Lock, ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,10 +55,10 @@ const mockProjectDetails: Record<string, any> = {
             projectsCompleted: 12
         },
         timeline: [
-            { phase: 'Planning & Design', duration: '2 weeks' },
-            { phase: 'Development', duration: '6 weeks' },
-            { phase: 'Marketing Launch', duration: '2 weeks' },
-            { phase: 'Sales Outreach', duration: 'Ongoing' }
+            { phase: 'Planning & Design', duration: '2 weeks', status: 'completed' },
+            { phase: 'Development', duration: '6 weeks', status: 'in-progress' },
+            { phase: 'Marketing Launch', duration: '2 weeks', status: 'pending' },
+            { phase: 'Sales Outreach', duration: 'Ongoing', status: 'pending' }
         ]
     },
     '2': {
@@ -102,9 +102,9 @@ const mockProjectDetails: Record<string, any> = {
             projectsCompleted: 5
         },
         timeline: [
-            { phase: 'Ideation', duration: '6 hours' },
-            { phase: 'Hacking', duration: '36 hours' },
-            { phase: 'Pitch Prep', duration: '6 hours' }
+            { phase: 'Ideation', duration: '6 hours', status: 'completed' },
+            { phase: 'Hacking', duration: '36 hours', status: 'in-progress' },
+            { phase: 'Pitch Prep', duration: '6 hours', status: 'pending' }
         ]
     },
     '3': {
@@ -408,10 +408,10 @@ const mockProjectDetails: Record<string, any> = {
             projectsCompleted: 3
         },
         timeline: [
-            { phase: 'Shop Setup & Verification', duration: '1 week' },
-            { phase: 'Inventory Transfer', duration: '2 weeks' },
-            { phase: 'Launch & SEO Optimization', duration: '1 week' },
-            { phase: 'Sales Operations', duration: 'Ongoing' }
+            { phase: 'Shop Setup & Verification', duration: '1 week', status: 'completed', payout: 500 },
+            { phase: 'Inventory Transfer', duration: '2 weeks', status: 'completed', payout: 1000 },
+            { phase: 'Launch & SEO Optimization', duration: '1 week', status: 'in-progress' },
+            { phase: 'Sales Operations', duration: 'Ongoing', status: 'pending' }
         ],
         duration: {
             type: 'fixed',
@@ -778,13 +778,44 @@ export function ProjectDetails() {
                             <CardContent>
                                 <div className="space-y-3">
                                     {project.timeline.map((phase: any, index: number) => (
-                                        <div key={index} className="flex items-center gap-4">
-                                            <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm">
-                                                {index + 1}
+                                        <div key={index} className="flex items-start gap-4">
+                                            <div className="mt-1">
+                                                {phase.status === 'completed' ? (
+                                                    <div className="bg-green-100 p-1.5 rounded-full">
+                                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                                    </div>
+                                                ) : phase.status === 'in-progress' ? (
+                                                    <div className="bg-blue-100 p-1.5 rounded-full animate-pulse">
+                                                        <Clock className="h-4 w-4 text-blue-600" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="bg-slate-100 p-1.5 rounded-full">
+                                                        <Lock className="h-4 w-4 text-slate-400" />
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="flex-1">
-                                                <p className="font-medium text-slate-900">{phase.phase}</p>
-                                                <p className="text-sm text-slate-600">{phase.duration}</p>
+                                                <div className="flex items-center justify-between mb-0.5">
+                                                    <p className="font-semibold text-slate-900">{phase.phase}</p>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0 ${phase.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                            phase.status === 'in-progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                                                'bg-slate-50 text-slate-500 border-slate-200'
+                                                            }`}
+                                                    >
+                                                        {phase.status || 'pending'}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-3 text-sm">
+                                                    <span className="text-slate-500">{phase.duration}</span>
+                                                    {phase.payout && (
+                                                        <span className="flex items-center gap-1 text-green-600 font-medium">
+                                                            <ShieldCheck className="h-3 w-3" />
+                                                            ${phase.payout.toLocaleString()} Released
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -795,11 +826,62 @@ export function ProjectDetails() {
 
                     {/* Sidebar */}
                     <div className="space-y-6">
+                        {/* Escrow Vault Card */}
+                        <Card className="bg-gradient-to-br from-primary-900 to-indigo-900 text-white border-none overflow-hidden relative shadow-lg">
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <ShieldCheck className="h-24 w-24 text-white" />
+                            </div>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-base flex items-center gap-2 text-white">
+                                    <ShieldCheck className="h-4 w-4 text-primary-300" />
+                                    Platform Escrow Vault
+                                </CardTitle>
+                                <CardDescription className="text-primary-100/70 text-xs">Platform-protected project funds</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4 relative z-10 text-white">
+                                <div className="p-3 bg-white/10 rounded-lg border border-white/10">
+                                    <p className="text-[10px] font-bold text-primary-200 uppercase tracking-widest mb-1">
+                                        {project.isRevenueBased ? 'Total Revenue Distributed' : 'Total Vault Balance'}
+                                    </p>
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-2xl font-bold">
+                                            {project.isRevenueBased
+                                                ? `$${(project.timeline.reduce((acc: number, p: any) => acc + (p.payout || 0), 0)).toLocaleString()}`
+                                                : `$${(project.budget - (project.timeline.reduce((acc: number, p: any) => acc + (p.payout || 0), 0))).toLocaleString()}`
+                                            }
+                                        </p>
+                                        <Badge variant="secondary" className="bg-primary-500 text-white border-none text-[10px]">
+                                            {project.isRevenueBased ? 'LIVE' : 'LOCKED'}
+                                        </Badge>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-bold text-primary-200 uppercase tracking-widest">Recent Distributions</p>
+                                    <div className="space-y-1.5">
+                                        {project.timeline.filter((p: any) => p.payout).map((p: any, i: number) => (
+                                            <div key={i} className="flex justify-between items-center text-xs p-2 bg-white/5 rounded border border-white/5">
+                                                <span className="text-white/80">{p.phase}</span>
+                                                <span className="font-bold text-green-300">+${p.payout.toLocaleString()}</span>
+                                            </div>
+                                        ))}
+                                        {!project.timeline.some((p: any) => p.payout) && (
+                                            <p className="text-xs text-white/50 italic py-2">No funds released yet</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <Button className="w-full bg-white text-primary-900 hover:bg-primary-50 text-xs h-8">
+                                    View Transaction History
+                                </Button>
+                            </CardContent>
+                        </Card>
+
                         {/* Workspace Link (Demo) */}
                         <Card className="bg-slate-900 text-white">
-                            <CardContent className="p-6">
-                                <h3 className="font-semibold text-lg mb-2">My Workspace</h3>
-                                <p className="text-slate-300 text-sm mb-4">You are a member of this project.</p>
+                            <CardHeader>
+                                <CardTitle className="text-base text-white">Project Workspace</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <p className="text-slate-300 text-sm">Access team tools, shared documents, and secure internal communication.</p>
                                 <Button
                                     onClick={() => navigate(`/projects/${project.id}/workspace`)}
                                     className="w-full bg-white text-slate-900 hover:bg-slate-100"

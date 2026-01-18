@@ -58,6 +58,12 @@ const initialPendingUsers = [
     { id: 'u3', name: 'Marcus Thorne', role: 'Growth Lead', bio: 'Scaled 3 startups from 0 to 1M users.', joinedDate: '2026-01-18', skills: ['Marketing', 'SEO'] },
 ];
 
+// Mock Data for Pending Milestones
+const initialPendingMilestones = [
+    { id: 'm1', project: 'Global Artisan Collective', phase: 'Launch & SEO Optimization', status: 'Verification Requested', requestedDate: '2026-01-18', payout: 2500 },
+    { id: 'm2', project: 'AI Task Manager', phase: 'Development', status: 'Verification Requested', requestedDate: '2026-01-18', payout: 5000 },
+];
+
 // Mock Data for Pending Payouts
 const initialPendingPayouts = [
     { id: 'py1', project: 'AI Task Manager', user: 'Sarah Johnson', amount: 2500, type: 'Milestone 2', date: '2026-01-18' },
@@ -76,6 +82,7 @@ export function AdminDashboard() {
     const [pendingProjects, setPendingProjects] = useState<any[]>([]);
     const [pendingUsers, setPendingUsers] = useState(initialPendingUsers);
     const [pendingPayouts, setPendingPayouts] = useState(initialPendingPayouts);
+    const [pendingMilestones, setPendingMilestones] = useState(initialPendingMilestones);
 
     const loadProjects = () => {
         const storedPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
@@ -95,7 +102,7 @@ export function AdminDashboard() {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    const handleApprove = (id: string, type: 'project' | 'user' | 'payout') => {
+    const handleApprove = (id: string, type: 'project' | 'user' | 'payout' | 'milestone') => {
         if (type === 'project') {
             const updated = pendingProjects.filter(p => p.id !== id);
             setPendingProjects(updated);
@@ -109,9 +116,10 @@ export function AdminDashboard() {
         }
         if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
         if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
+        if (type === 'milestone') setPendingMilestones(pendingMilestones.filter(m => m.id !== id));
     };
 
-    const handleReject = (id: string, type: 'project' | 'user' | 'payout') => {
+    const handleReject = (id: string, type: 'project' | 'user' | 'payout' | 'milestone') => {
         if (type === 'project') {
             const updated = pendingProjects.filter(p => p.id !== id);
             setPendingProjects(updated);
@@ -123,6 +131,7 @@ export function AdminDashboard() {
         }
         if (type === 'user') setPendingUsers(pendingUsers.filter(u => u.id !== id));
         if (type === 'payout') setPendingPayouts(pendingPayouts.filter(p => p.id !== id));
+        if (type === 'milestone') setPendingMilestones(pendingMilestones.filter(m => m.id !== id));
     };
 
     return (
@@ -152,6 +161,10 @@ export function AdminDashboard() {
                             <TabsTrigger value="payouts" className="gap-2">
                                 <Wallet className="h-4 w-4" />
                                 Payouts ({pendingPayouts.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="milestones" className="gap-2">
+                                <ShieldCheck className="h-4 w-4" />
+                                Milestones ({pendingMilestones.length})
                             </TabsTrigger>
                             <TabsTrigger value="revenue" className="gap-2">
                                 <Activity className="h-4 w-4" />
@@ -325,8 +338,68 @@ export function AdminDashboard() {
                         </div>
                     </TabsContent>
 
+                    {/* Milestones Tab */}
+                    <TabsContent value="milestones" className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pendingMilestones.map((milestone) => (
+                                <Card key={milestone.id} className="overflow-hidden border-2 border-slate-100 hover:border-primary-100 transition-all">
+                                    <CardHeader className="bg-slate-50/50 pb-4">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <CardTitle className="text-lg">{milestone.project}</CardTitle>
+                                                <CardDescription className="flex items-center gap-1 mt-1">
+                                                    <Activity className="h-3 w-3" />
+                                                    {milestone.phase}
+                                                </CardDescription>
+                                            </div>
+                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                                Verification Requested
+                                            </Badge>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="pt-4">
+                                        <div className="flex justify-between items-center mb-4 p-3 bg-primary-50 rounded-lg border border-primary-100">
+                                            <div className="flex items-center gap-2">
+                                                <DollarSign className="h-4 w-4 text-primary-600" />
+                                                <span className="text-sm font-semibold text-primary-900">Release Amount</span>
+                                            </div>
+                                            <span className="text-lg font-bold text-primary-700">${milestone.payout.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
+                                            <Clock className="h-3 w-3" />
+                                            Requested on {milestone.requestedDate}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <Button
+                                                variant="outline"
+                                                className="border-slate-200 text-slate-600 hover:bg-slate-50"
+                                                onClick={() => handleReject(milestone.id, 'milestone')}
+                                            >
+                                                <XCircle className="mr-2 h-4 w-4" />
+                                                Reject
+                                            </Button>
+                                            <Button
+                                                className="bg-primary-600 hover:bg-primary-700 text-white"
+                                                onClick={() => handleApprove(milestone.id, 'milestone')}
+                                            >
+                                                <CheckCircle className="mr-2 h-4 w-4" />
+                                                Verify & Release
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                            {pendingMilestones.length === 0 && (
+                                <div className="col-span-2 py-12 text-center bg-white rounded-xl border-2 border-dashed border-slate-200">
+                                    <ShieldCheck className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                                    <p className="text-slate-500 font-medium">No milestones awaiting verification</p>
+                                </div>
+                            )}
+                        </div>
+                    </TabsContent>
+
                     {/* Revenue Tab (Existing) */}
-                    <TabsContent value="revenue" className="space-y-6">
+                    <TabsContent value="revenue" className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <StatCard title="Total Platform Revenue" value="$45,231.89" icon={<DollarSign className="h-4 w-4" />} trend="+20.1% this month" />
                             <StatCard title="Net Platform Fees" value="$2,350.00" icon={<TrendingUp className="h-4 w-4" />} trend="+15% this month" />
