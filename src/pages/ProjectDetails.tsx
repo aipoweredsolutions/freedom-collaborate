@@ -377,13 +377,33 @@ const mockProjectDetails: Record<string, any> = {
 
 const getSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
+const statusColors = {
+    open: 'success',
+    'in-progress': 'warning',
+    completed: 'secondary',
+    cancelled: 'destructive',
+    'expiring-soon': 'destructive', // For revenue sharing
+    'revenue-completed': 'secondary' // For revenue sharing
+} as const;
+
 export function ProjectDetails() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [hasApplied, setHasApplied] = useState(false);
     const [hasAgreed, setHasAgreed] = useState(false);
 
-    const project = id ? (mockProjectDetails[id] as any) : null;
+    // Load project from mock data or localStorage
+    const getProject = () => {
+        if (!id) return null;
+        if (mockProjectDetails[id]) return mockProjectDetails[id];
+
+        // Check localStorage (pending or approved - for now we check pending)
+        const pending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+        const found = pending.find((p: any) => p.id === id);
+        return found || null;
+    };
+
+    const project = getProject();
 
     const handleApply = () => {
         setHasApplied(true);
@@ -404,12 +424,29 @@ export function ProjectDetails() {
         );
     }
 
-    const statusColors = {
-        open: 'success',
-        'in-progress': 'warning',
-        completed: 'secondary',
-        cancelled: 'destructive'
-    } as const;
+    // Calculate remaining time for project and revenue sharing
+    const getRemainingTime = (endDate: string | null) => {
+        if (!endDate) return null;
+        const end = new Date(endDate).getTime();
+        const now = new Date().getTime();
+        const diff = end - now;
+        if (diff <= 0) return 'Expired';
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        if (days > 30) {
+            const months = Math.floor(days / 30);
+            return `${months} month${months > 1 ? 's' : ''} left`;
+        }
+        return `${days} day${days > 1 ? 's' : ''} left`;
+    };
+
+    const projectRemaining = project.duration?.type === 'fixed'
+        ? getRemainingTime(project.duration.endDate)
+        : null;
+
+    // Revenue sharing status calculation (simplified for demo)
+    const revenueStatus = project.revenueSharing?.type === 'fixed-term' ? 'Active' : project.revenueSharing?.type === 'ongoing' ? 'Ongoing' : 'One-time';
+    const revenueRemaining = project.revenueSharing?.type === 'fixed-term' ? `${project.revenueSharing.term} months total` : null;
 
     return (
         <div className="min-h-screen bg-slate-50 py-8">
@@ -650,6 +687,59 @@ export function ProjectDetails() {
                                 >
                                     Open Workspace
                                 </Button>
+                            </CardContent>
+                        </Card>
+
+                        {/* Duration & Revenue Agreement Card */}
+                        <Card className="border-l-4 border-l-primary-500 overflow-hidden">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-base flex items-center justify-between">
+                                    Agreement Terms
+                                    <Badge variant="outline" className="bg-primary-50 text-primary-700 border-primary-200">Locked</Badge>
+                                </CardTitle>
+                                <CardDescription>Time-bound collaboration terms</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-tight">
+                                        <span>Project Duration</span>
+                                        {projectRemaining && <span className="text-primary-600 normal-case font-semibold">{projectRemaining}</span>}
+                                    </div>
+                                    <div className="p-2 bg-slate-50 rounded border border-slate-100">
+                                        <p className="text-sm font-semibold text-slate-900">
+                                            {project.duration?.type === 'fixed'
+                                                ? `${new Date(project.duration.startDate).toLocaleDateString()} - ${new Date(project.duration.endDate).toLocaleDateString()}`
+                                                : 'Ongoing Collaboration'
+                                            }
+                                        </p>
+                                        {project.duration?.type === 'ongoing' && project.duration.reviewDate && (
+                                            <p className="text-[10px] text-slate-500 mt-0.5 italic">Next Review: {new Date(project.duration.reviewDate).toLocaleDateString()}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-tight">
+                                        <span>Revenue Sharing</span>
+                                        <span className={`text-[10px] px-1.5 rounded-full ${revenueStatus === 'Active' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                            }`}>{revenueStatus}</span>
+                                    </div>
+                                    <div className="p-2 bg-slate-50 rounded border border-slate-100">
+                                        <p className="text-sm font-semibold text-slate-900">
+                                            {project.revenueSharing?.type === 'one-time' && 'One-time Payout'}
+                                            {project.revenueSharing?.type === 'fixed-term' && `${project.revenueSharing.term} Months Fixed Term`}
+                                            {project.revenueSharing?.type === 'ongoing' && 'Ongoing Distribution'}
+                                            {!project.revenueSharing && 'Standard Split'}
+                                        </p>
+                                        {revenueRemaining && (
+                                            <p className="text-[10px] text-slate-500 mt-0.5 italic">{revenueRemaining} distributed monthly after completion.</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="pt-2">
+                                    <p className="text-[10px] text-slate-400 text-center uppercase tracking-widest font-bold">Guaranteed by Platform Agreement</p>
+                                </div>
                             </CardContent>
                         </Card>
 

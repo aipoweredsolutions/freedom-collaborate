@@ -139,16 +139,26 @@ export function ProjectDashboard() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState<string>('all');
 
-    const filteredProjects = mockProjects.filter(project => {
+    // Combine mock projects with user-submitted projects from localStorage
+    const [projects] = useState(() => {
+        const stored = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
+        // In a real app, we would only show approved projects here, but for demo we show all
+        return [...mockProjects, ...stored].map(p => ({
+            ...p,
+            status: p.status || 'open' // ensure status exists
+        }));
+    });
+
+    const filteredProjects = projects.filter(project => {
         const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             project.description.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesStatus = filterStatus === 'all' || project.status === filterStatus;
         return matchesSearch && matchesStatus;
     });
 
-    const totalBudget = filteredProjects.reduce((sum, p) => sum + p.budget, 0);
-    const openPositions = filteredProjects.reduce((sum, p) =>
-        sum + p.roles.filter(r => !r.filled).length, 0
+    const totalBudget = filteredProjects.reduce((sum: number, p: any) => sum + p.budget, 0);
+    const openPositions = filteredProjects.reduce((sum: number, p: any) =>
+        sum + p.roles.filter((r: any) => !r.filled).length, 0
     );
 
     return (
@@ -279,7 +289,7 @@ export function ProjectDashboard() {
                                     <div>
                                         <p className="text-sm font-medium text-slate-700 mb-2">Open Roles:</p>
                                         <div className="flex flex-wrap gap-2">
-                                            {project.roles.map((role, idx) => (
+                                            {project.roles.map((role: any, idx: number) => (
                                                 <Badge
                                                     key={idx}
                                                     variant={role.filled ? 'secondary' : 'primary'}
@@ -296,7 +306,7 @@ export function ProjectDashboard() {
                                     <div className="bg-slate-50 rounded-lg p-3">
                                         <p className="text-xs font-medium text-slate-600 mb-2">Revenue Split</p>
                                         <div className="flex h-2 rounded-full overflow-hidden bg-slate-200">
-                                            {project.roles.map((role, idx) => (
+                                            {project.roles.map((role: any, idx: number) => (
                                                 <div
                                                     key={idx}
                                                     style={{ width: `${role.split}%` }}

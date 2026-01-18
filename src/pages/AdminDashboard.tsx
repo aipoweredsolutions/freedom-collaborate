@@ -181,6 +181,29 @@ export function AdminDashboard() {
                                         </CardHeader>
                                         <CardContent>
                                             <p className="text-slate-600 mb-4">{project.description}</p>
+
+                                            {/* Duration & Revenue Details */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                                                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Project Duration</p>
+                                                    <p className="text-sm font-semibold text-slate-900">
+                                                        {project.duration?.type === 'fixed'
+                                                            ? `${project.duration.startDate} to ${project.duration.endDate}`
+                                                            : 'Ongoing' + (project.duration?.reviewDate ? ` (Review: ${project.duration.reviewDate})` : '')
+                                                        }
+                                                    </p>
+                                                </div>
+                                                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Revenue Terms</p>
+                                                    <p className="text-sm font-semibold text-slate-900">
+                                                        {project.revenueSharing?.type === 'one-time' && 'One-time Payout'}
+                                                        {project.revenueSharing?.type === 'fixed-term' && `${project.revenueSharing.term} Months Fixed Term`}
+                                                        {project.revenueSharing?.type === 'ongoing' && 'Ongoing Distribution'}
+                                                        {!project.revenueSharing && 'Standard'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
                                             <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 mb-6 font-medium">
                                                 <div className="flex items-center gap-2">
                                                     <DollarSign className="h-4 w-4 text-green-600" />
@@ -201,11 +224,21 @@ export function AdminDashboard() {
                                                 </Button>
                                                 <Button
                                                     variant="outline"
-                                                    onClick={() => handleReject(project.id, 'project')}
+                                                    onClick={() => {
+                                                        const reason = prompt("Enter reason for pause/rejection:");
+                                                        if (reason) handleReject(project.id, 'project');
+                                                    }}
                                                     className="text-red-600 border-red-200 hover:bg-red-50"
                                                 >
                                                     <XCircle className="mr-2 h-4 w-4" />
-                                                    Reject
+                                                    Reject / Pause
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    onClick={() => alert("Renewal assistant launched for " + project.title)}
+                                                    className="text-primary-600"
+                                                >
+                                                    Modify Terms
                                                 </Button>
                                             </div>
                                         </CardContent>

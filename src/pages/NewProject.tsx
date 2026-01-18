@@ -28,6 +28,16 @@ export function NewProject() {
     const [projectType, setProjectType] = useState<'Startup' | 'Hackathon' | 'Enterprise'>('Startup');
     const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
 
+    // Duration state
+    const [durationSelection, setDurationSelection] = useState<'fixed' | 'ongoing'>('fixed');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [reviewDate, setReviewDate] = useState('');
+
+    // Revenue Sharing Duration state
+    const [revenueSharingDuration, setRevenueSharingDuration] = useState<'one-time' | 'fixed-term' | 'ongoing'>('one-time');
+    const [revenueSharingTerm, setRevenueSharingTerm] = useState('12');
+
     const [roles, setRoles] = useState<Role[]>([
         { id: '1', title: '', split: 0, description: '' }
     ]);
@@ -65,7 +75,19 @@ export function NewProject() {
             rolesCount: roles.length,
             description: projectDescription,
             submittedDate: new Date().toISOString().split('T')[0],
-            roles: roles // Storing roles for detailed review
+            roles: roles, // Storing roles for detailed review
+            // New duration fields
+            duration: {
+                type: durationSelection,
+                startDate: durationSelection === 'fixed' ? startDate : null,
+                endDate: durationSelection === 'fixed' ? endDate : null,
+                reviewDate: durationSelection === 'ongoing' ? reviewDate : null
+            },
+            revenueSharing: {
+                type: revenueSharingDuration,
+                term: revenueSharingDuration === 'fixed-term' ? Number(revenueSharingTerm) : null
+            },
+            status: 'pending'
         };
 
         // Get existing pending projects from localStorage
@@ -79,10 +101,12 @@ export function NewProject() {
         navigate('/projects');
     };
 
-    const canProceedStep1 = projectTitle && projectDescription && budget && deadline && category;
+    const canProceedStep1 = projectTitle && projectDescription && budget && deadline && category &&
+        (durationSelection === 'fixed' ? (startDate && endDate) : true);
     const canProceedStep2 = roles.length > 0 &&
         roles.every(r => r.title && r.split > 0) &&
-        totalSplit === 100;
+        totalSplit === 100 &&
+        (revenueSharingDuration === 'fixed-term' ? Number(revenueSharingTerm) > 0 : true);
 
     return (
         <div className="min-h-screen bg-slate-50 py-8">
@@ -220,6 +244,65 @@ export function NewProject() {
                                 </div>
                             </div>
 
+                            <div className="space-y-4 border-t pt-6">
+                                <Label className="text-base font-semibold">Project Duration *</Label>
+                                <p className="text-sm text-slate-500">How long will the team actively collaborate?</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        type="button"
+                                        variant={durationSelection === 'fixed' ? 'default' : 'outline'}
+                                        onClick={() => setDurationSelection('fixed')}
+                                        className="flex-1"
+                                    >
+                                        Fixed Duration
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={durationSelection === 'ongoing' ? 'default' : 'outline'}
+                                        onClick={() => setDurationSelection('ongoing')}
+                                        className="flex-1"
+                                    >
+                                        Ongoing Project
+                                    </Button>
+                                </div>
+
+                                {durationSelection === 'fixed' && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="startDate">Start Date *</Label>
+                                            <Input
+                                                id="startDate"
+                                                type="date"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="endDate">End Date *</Label>
+                                            <Input
+                                                id="endDate"
+                                                type="date"
+                                                value={endDate}
+                                                onChange={(e) => setEndDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {durationSelection === 'ongoing' && (
+                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                        <Label htmlFor="reviewDate">Optional Review Date</Label>
+                                        <Input
+                                            id="reviewDate"
+                                            type="date"
+                                            value={reviewDate}
+                                            onChange={(e) => setReviewDate(e.target.value)}
+                                        />
+                                        <p className="text-xs text-slate-400">Collaborators will be notified to review terms on this date.</p>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="flex justify-end pt-4">
                                 <Button
                                     onClick={() => setStep(2)}
@@ -342,6 +425,50 @@ export function NewProject() {
                                     </div>
                                 </div>
 
+                                <div className="space-y-4 border-t pt-6">
+                                    <Label className="text-base font-semibold">Revenue Sharing Duration *</Label>
+                                    <p className="text-sm text-slate-500">How long will revenue be distributed after delivery?</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        {[
+                                            { id: 'one-time', label: 'One-time Payout' },
+                                            { id: 'fixed-term', label: 'Fixed Term' },
+                                            { id: 'ongoing', label: 'Ongoing' }
+                                        ].map((t) => (
+                                            <Button
+                                                key={t.id}
+                                                type="button"
+                                                variant={revenueSharingDuration === t.id ? 'default' : 'outline'}
+                                                size="sm"
+                                                onClick={() => setRevenueSharingDuration(t.id as any)}
+                                                className="flex-1"
+                                            >
+                                                {t.label}
+                                            </Button>
+                                        ))}
+                                    </div>
+
+                                    {revenueSharingDuration === 'fixed-term' && (
+                                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                            <Label htmlFor="rsTerm">Duration (Months)</Label>
+                                            <Input
+                                                id="rsTerm"
+                                                type="number"
+                                                min="1"
+                                                placeholder="12"
+                                                value={revenueSharingTerm}
+                                                onChange={(e) => setRevenueSharingTerm(e.target.value)}
+                                            />
+                                            <p className="text-xs text-slate-400">Revenue will be shared for this many months after project completion.</p>
+                                        </div>
+                                    )}
+
+                                    {revenueSharingDuration === 'ongoing' && (
+                                        <p className="text-xs text-slate-500 italic">
+                                            Revenue sharing will continue until terminated by mutual agreement of all contributors.
+                                        </p>
+                                    )}
+                                </div>
+
                                 <div className="flex justify-between pt-4">
                                     <Button variant="outline" onClick={() => setStep(1)}>
                                         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -402,6 +529,29 @@ export function NewProject() {
                                     <div className="mt-3">
                                         <p className="text-sm text-slate-600 mb-1">Description:</p>
                                         <p className="text-sm text-slate-900">{projectDescription}</p>
+                                    </div>
+                                </div>
+
+                                <div className="border-t border-slate-200 pt-6">
+                                    <h3 className="font-semibold text-slate-900 mb-3">Duration & Revenue Terms</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                        <div className="p-3 bg-slate-50 rounded-lg">
+                                            <p className="text-slate-500 mb-1 uppercase text-[10px] font-bold tracking-wider">Project Duration</p>
+                                            <p className="font-medium text-slate-900">
+                                                {durationSelection === 'fixed'
+                                                    ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`
+                                                    : 'Ongoing' + (reviewDate ? ` (Review: ${new Date(reviewDate).toLocaleDateString()})` : '')
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="p-3 bg-slate-50 rounded-lg">
+                                            <p className="text-slate-500 mb-1 uppercase text-[10px] font-bold tracking-wider">Revenue Sharing</p>
+                                            <p className="font-medium text-slate-900">
+                                                {revenueSharingDuration === 'one-time' && 'One-time Payout'}
+                                                {revenueSharingDuration === 'fixed-term' && `${revenueSharingTerm} Months Fixed Term`}
+                                                {revenueSharingDuration === 'ongoing' && 'Ongoing Collaborative Distribution'}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 
