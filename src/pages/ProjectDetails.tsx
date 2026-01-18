@@ -152,13 +152,13 @@ const mockProjectDetails: Record<string, Project> = {
             name: 'Priya Sharma',
             avatar: 'PS',
             reputation: 4.9,
-            projectsCompleted: 3
+            projectsCompleted: 0
         },
         timeline: [
-            { phase: 'Shop Setup & Verification', duration: '1 week', status: 'completed', payout: 500 },
-            { phase: 'Inventory Transfer', duration: '2 weeks', status: 'completed', payout: 1000 },
-            { phase: 'Launch & SEO Optimization', duration: '1 week', status: 'in-progress' },
-            { phase: 'Sales Operations', duration: 'Ongoing', status: 'pending' }
+            { phase: 'Shop Setup & Tax Verification', duration: 'Feb 1 - Feb 7, 2026', status: 'pending' },
+            { phase: 'Inventory & Digital Asset Transfer', duration: 'Feb 8 - Feb 21, 2026', status: 'pending' },
+            { phase: 'Beta Launch & SEO Tuning', duration: 'Feb 22 - Feb 28, 2026', status: 'pending' },
+            { phase: 'Scale Operations (Revenue Phase)', duration: 'March 2026+', status: 'pending' }
         ],
         duration: {
             type: 'fixed',
