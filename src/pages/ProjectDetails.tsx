@@ -372,6 +372,55 @@ const mockProjectDetails: Record<string, any> = {
             { phase: 'Pilot in Target Market', duration: '4 weeks' },
             { phase: 'Global Expansion', duration: 'Ongoing' }
         ]
+    },
+    '8': {
+        id: '8',
+        title: 'Global Artisan Collective (Etsy Partnership)',
+        description: 'I have a collection of high-quality handcrafted designs and physical items (jewelry and home decor) that have high demand but I cannot sell them on Etsy as it is not supported in my region. I am looking for a responsible partner in the USA to open a shop, manage regional logistics, and handle customer communication. I will handle all design, production, and international shipping to your hub.',
+        budget: 12000,
+        status: 'open',
+        type: 'Startup',
+        roles: [
+            {
+                title: 'Product Designer & Maker',
+                split: 70,
+                filled: true,
+                description: 'Original creator of designs and manufacturer of physical goods. Based in a non-Etsy region.',
+                requirements: ['Product Design', 'Manufacturing', 'Global Logistics']
+            },
+            {
+                title: 'US Operations & Shop Manager',
+                split: 30,
+                filled: false,
+                description: 'Primary shop owner for US-based Etsy storefront. Handles local taxes, customer support, and final mile delivery.',
+                requirements: ['US Residency', 'Etsy Shop Management', 'Customer Service', 'Basic Accounting']
+            }
+        ],
+        deadline: '2026-04-30',
+        applicants: 3,
+        category: 'E-Commerce',
+        location: 'Remote / USA',
+        createdBy: {
+            name: 'Priya Sharma',
+            avatar: 'PS',
+            reputation: 4.9,
+            projectsCompleted: 3
+        },
+        timeline: [
+            { phase: 'Shop Setup & Verification', duration: '1 week' },
+            { phase: 'Inventory Transfer', duration: '2 weeks' },
+            { phase: 'Launch & SEO Optimization', duration: '1 week' },
+            { phase: 'Sales Operations', duration: 'Ongoing' }
+        ],
+        duration: {
+            type: 'fixed',
+            startDate: '2026-02-01',
+            endDate: '2031-02-01',
+        },
+        revenueSharing: {
+            type: 'fixed-term',
+            term: 60
+        }
     }
 };
 
@@ -382,8 +431,8 @@ const statusColors = {
     'in-progress': 'warning',
     completed: 'secondary',
     cancelled: 'destructive',
-    'expiring-soon': 'destructive', // For revenue sharing
-    'revenue-completed': 'secondary' // For revenue sharing
+    'expiring-soon': 'destructive',
+    'revenue-completed': 'secondary'
 } as const;
 
 export function ProjectDetails() {

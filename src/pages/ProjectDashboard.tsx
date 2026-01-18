@@ -125,6 +125,21 @@ const mockProjects = [
         deadline: '2026-08-15',
         applicants: 19,
         category: 'DeFi'
+    },
+    {
+        id: '8',
+        title: 'Global Artisan Collective (Etsy Partnership)',
+        description: 'Seek a US-based partner to launch and manage an Etsy storefront for handcrafted designs. Seeking long-term 5-year partnership.',
+        budget: 12000,
+        status: 'open',
+        type: 'Startup',
+        roles: [
+            { title: 'Product Designer & Maker', split: 70, filled: true, description: 'Creating unique handcrafted items and digital designs.' },
+            { title: 'US Operations & Shop Manager', split: 30, filled: false, description: 'Opening Etsy shop, handling customer service & regional logistics in USA.' }
+        ],
+        deadline: '2026-04-30',
+        applicants: 3,
+        category: 'E-Commerce'
     }
 ];
 
