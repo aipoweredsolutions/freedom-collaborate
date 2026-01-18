@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, Briefcase, MapPin, Calendar, CheckCircle2, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Star, Briefcase, MapPin, Calendar, CheckCircle2, MessageSquare, ShieldCheck, Award, TrendingUp, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,26 @@ const mockUsers: Record<string, any> = {
         recentProjects: [
             { id: '1', title: 'AI Task Manager', role: 'Lead Frontend' },
             { id: '4', title: 'E-commerce Redesign', role: 'UI Architect' }
+        ],
+        verifiedContributions: [
+            {
+                projectId: '1',
+                projectTitle: 'AI Task Manager',
+                role: 'Lead Frontend',
+                milestones: 4,
+                totalValue: 4500,
+                revenueGenerated: null,
+                date: 'Completed Feb 2024'
+            },
+            {
+                projectId: '4',
+                projectTitle: 'Blockchain Dashboard',
+                role: 'UI Architect',
+                milestones: 6,
+                totalValue: 7500,
+                revenueGenerated: null,
+                date: 'Completed Jan 2024'
+            }
         ]
     },
     'david-kim': {
@@ -34,6 +54,17 @@ const mockUsers: Record<string, any> = {
         joinedDate: 'March 2024',
         recentProjects: [
             { id: '2', title: 'Health monitoring system', role: 'API Developer' }
+        ],
+        verifiedContributions: [
+            {
+                projectId: '2',
+                projectTitle: 'Health monitoring system',
+                role: 'API Developer',
+                milestones: 3,
+                totalValue: 1200,
+                revenueGenerated: null,
+                date: 'Completed April 2024'
+            }
         ]
     },
     'marcus-thorne': {
@@ -92,7 +123,18 @@ const mockUsers: Record<string, any> = {
         location: 'New York, USA (Remote)',
         reputation: 5.0,
         joinedDate: 'March 2024',
-        recentProjects: []
+        recentProjects: [],
+        verifiedContributions: [
+            {
+                projectId: '8',
+                projectTitle: 'Global Artisan Collective',
+                role: 'Growth Lead',
+                milestones: 2,
+                totalValue: 1500,
+                revenueGenerated: 12400,
+                date: 'Active Partnership'
+            }
+        ]
     }
 };
 
@@ -233,10 +275,93 @@ export function UserProfile() {
                             </CardContent>
                         </Card>
 
+                        <Card className="border-none shadow-lg overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <CardTitle className="text-white flex items-center gap-2">
+                                            <ShieldCheck className="h-5 w-5 text-primary-400" />
+                                            Verified Contribution History
+                                        </CardTitle>
+                                        <CardDescription className="text-slate-400">Permanently verified achievements on Freedom Collaborate</CardDescription>
+                                    </div>
+                                    <Badge className="bg-primary-500 text-white border-none">Proof of Work</Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-0 bg-white">
+                                {user.verifiedContributions && user.verifiedContributions.length > 0 ? (
+                                    <div className="divide-y divide-slate-100">
+                                        {user.verifiedContributions.map((contribution: any, idx: number) => (
+                                            <div key={idx} className="p-6 hover:bg-slate-50 transition-colors">
+                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h4 className="font-bold text-slate-900 text-lg">{contribution.projectTitle}</h4>
+                                                            <div className="flex items-center gap-1 bg-green-50 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-green-100">
+                                                                <ShieldCheck className="h-3 w-3" />
+                                                                Verified
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-slate-600 font-medium flex items-center gap-2">
+                                                            <Briefcase className="h-4 w-4 text-slate-400" />
+                                                            {contribution.role}
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-left md:text-right">
+                                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{contribution.date}</p>
+                                                        <div className="flex items-center gap-1 md:justify-end text-primary-600 font-bold text-xl mt-1">
+                                                            <DollarSign className="h-5 w-5" />
+                                                            {contribution.totalValue.toLocaleString()}
+                                                            <span className="text-xs text-slate-400 font-normal ml-1">Earned</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                        <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Milestones</p>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <Award className="h-4 w-4 text-primary-500" />
+                                                            <span className="font-bold text-slate-900">{contribution.milestones} Completed</span>
+                                                        </div>
+                                                    </div>
+                                                    {contribution.revenueGenerated && (
+                                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                                            <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Revenue Impact</p>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <TrendingUp className="h-4 w-4 text-green-500" />
+                                                                <span className="font-bold text-slate-900">${contribution.revenueGenerated.toLocaleString()}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div className="col-span-2 flex items-center gap-2">
+                                                        <div className="flex -space-x-2">
+                                                            {[1, 2, 3].map(i => (
+                                                                <div key={i} className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[8px] font-bold">
+                                                                    ID
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <span className="text-[10px] text-slate-400 italic">Endorsed by 3 team members</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="p-12 text-center">
+                                        <Award className="h-12 w-12 text-slate-200 mx-auto mb-4" />
+                                        <p className="text-slate-500 font-medium">Building a verified history of success</p>
+                                        <p className="text-xs text-slate-400 mt-1 italic">Complete your first project milestone to earn proof of work</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
                         <Card>
                             <CardHeader>
-                                <CardTitle>Experience & Projects</CardTitle>
-                                <CardDescription>Key contributions on Freedom Collaborate</CardDescription>
+                                <CardTitle>Legacy Context</CardTitle>
+                                <CardDescription>Previous external experience (Self-reported)</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {user.recentProjects.length > 0 ? (
@@ -252,13 +377,13 @@ export function UserProfile() {
                                                         <p className="text-sm text-slate-500">{proj.role}</p>
                                                     </div>
                                                 </div>
-                                                <Badge variant="outline">Completed</Badge>
+                                                <Badge variant="outline">Legacy Portfolio</Badge>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                                        <p className="text-sm text-slate-500">New member with high potential</p>
+                                        <p className="text-sm text-slate-500">Fresh profile on Freedom Collaborate</p>
                                     </div>
                                 )}
                             </CardContent>
