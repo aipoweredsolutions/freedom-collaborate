@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import {
     CheckCircle,
     XCircle,
@@ -6,7 +6,6 @@ import {
     TrendingUp,
     CreditCard,
     Activity,
-    AlertCircle,
     Users,
     ShieldCheck,
     Clock,
@@ -78,10 +77,22 @@ export function AdminDashboard() {
     const [pendingUsers, setPendingUsers] = useState(initialPendingUsers);
     const [pendingPayouts, setPendingPayouts] = useState(initialPendingPayouts);
 
-    useEffect(() => {
-        // Load from localStorage on mount
+    const loadProjects = () => {
         const storedPending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
         setPendingProjects([...initialPendingProjects, ...storedPending]);
+    };
+
+    useEffect(() => {
+        loadProjects();
+
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'pendingProjects') {
+                loadProjects();
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     const handleApprove = (id: string, type: 'project' | 'user' | 'payout') => {
@@ -323,7 +334,7 @@ export function AdminDashboard() {
     );
 }
 
-function StatCard({ title, value, icon, trend }: { title: string; value: string; icon: React.ReactNode; trend: string }) {
+function StatCard({ title, value, icon, trend }: { title: string; value: string; icon: ReactNode; trend: string }) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
