@@ -441,6 +441,7 @@ export function ProjectDetails() {
     const navigate = useNavigate();
     const [hasApplied, setHasApplied] = useState(false);
     const [hasAgreed, setHasAgreed] = useState(false);
+    const [simulatedRevenue, setSimulatedRevenue] = useState(10000);
 
     // Load project from mock data or localStorage
     const getProject = () => {
@@ -597,6 +598,61 @@ export function ProjectDetails() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
+                        {/* Revenue Simulator - Only show for revenue projects or optionally for all */}
+                        <Card className="bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-xl overflow-hidden relative">
+                            <div className="absolute top-0 right-0 p-8 opacity-10">
+                                <TrendingUp className="h-32 w-32" />
+                            </div>
+                            <CardHeader>
+                                <CardTitle className="text-white flex items-center gap-2">
+                                    <TrendingUp className="h-5 w-5 text-primary-400" />
+                                    Revenue Split Simulator
+                                </CardTitle>
+                                <CardDescription className="text-slate-300">
+                                    Estimate monthly sales to see how revenue is distributed across roles.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6 relative z-10">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-end mb-2">
+                                        <label className="text-sm font-medium text-slate-300">Estimated Monthly Revenue</label>
+                                        <span className="text-2xl font-bold text-primary-400">${simulatedRevenue.toLocaleString()}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="1000"
+                                        max="100000"
+                                        step="1000"
+                                        value={simulatedRevenue}
+                                        onChange={(e) => setSimulatedRevenue(Number(e.target.value))}
+                                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                                    />
+                                    <div className="flex justify-between text-xs text-slate-400">
+                                        <span>$1,000</span>
+                                        <span>$50,000</span>
+                                        <span>$100,000+</span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                                    {project.roles.map((role: any, idx: number) => (
+                                        <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <span className="text-sm font-medium text-slate-300">{role.title}</span>
+                                                <Badge variant="outline" className="border-slate-600 text-slate-400 text-[10px] uppercase tracking-wider">
+                                                    {role.split}%
+                                                </Badge>
+                                            </div>
+                                            <p className="text-xl font-bold text-white">
+                                                ${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()}
+                                                <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         {/* Open Roles */}
                         <Card>
                             <CardHeader>
@@ -640,17 +696,25 @@ export function ProjectDetails() {
                                     {/* Financial Summary Table */}
                                     <div className="mt-4 pt-4 border-t border-slate-200">
                                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Financial Payout Summary</p>
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-slate-600">Total Project Budget:</span>
-                                                <span className="font-bold text-slate-900">${project.budget.toLocaleString()}</span>
+                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                            <div className="flex items-center gap-2 mb-4 text-slate-900 font-semibold">
+                                                <DollarSign className="h-4 w-4 text-primary-500" />
+                                                {project.isRevenueBased ? 'Simulated Monthly Distribution' : 'Total Budget Distribution'}
                                             </div>
-                                            {project.roles.map((role: any, idx: number) => (
-                                                <div key={idx} className="flex justify-between text-xs">
-                                                    <span className="text-slate-500">{role.title}:</span>
-                                                    <span className="text-slate-700 font-medium">${((project.budget * role.split) / 100).toLocaleString()} ({role.split}%)</span>
-                                                </div>
-                                            ))}
+                                            <div className="space-y-3">
+                                                {project.roles.map((role: any, index: number) => (
+                                                    <div key={index} className="flex justify-between text-sm items-center">
+                                                        <span className="text-slate-600 font-medium">{role.title}:</span>
+                                                        <span className="text-slate-900 font-bold">
+                                                            {project.isRevenueBased
+                                                                ? `$${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()} / mo`
+                                                                : `$${((project.budget * role.split) / 100).toLocaleString()}`
+                                                            }
+                                                            <span className="text-slate-500 font-normal ml-1">({role.split}%)</span>
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -674,7 +738,10 @@ export function ProjectDetails() {
                                                     {role.filled ? 'Filled' : `${role.split}% split`}
                                                 </Badge>
                                                 <p className="text-sm font-semibold text-slate-900 mt-1">
-                                                    ${((project.budget * role.split) / 100).toLocaleString()}
+                                                    {project.isRevenueBased
+                                                        ? `$${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()} (est/mo)`
+                                                        : `$${((project.budget * role.split) / 100).toLocaleString()}`
+                                                    }
                                                 </p>
                                             </div>
                                         </div>
