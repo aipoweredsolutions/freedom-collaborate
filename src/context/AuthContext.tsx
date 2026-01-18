@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
 // Define the User type
@@ -24,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
 
     // Mock login function
-    const login = async (email: string, _password?: string) => {
+    const login = async (email: string) => {
         setIsLoading(true);
         // Simulate API call
         setTimeout(() => {

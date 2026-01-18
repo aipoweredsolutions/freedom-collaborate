@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, Briefcase, MapPin, Calendar, CheckCircle2, MessageSquare, ShieldCheck, Award, TrendingUp, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

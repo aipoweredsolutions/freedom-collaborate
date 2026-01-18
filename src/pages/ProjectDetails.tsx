@@ -1,12 +1,71 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, DollarSign, Calendar, Users, MapPin, TrendingUp, CheckCircle, Clock, Lock, ShieldCheck, MessageCircle } from 'lucide-react';
+import {
+    ArrowLeft,
+    DollarSign,
+    Calendar,
+    Users,
+    MapPin,
+    TrendingUp,
+    CheckCircle,
+    Clock,
+    Lock,
+    ShieldCheck,
+    MessageCircle,
+    Activity
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
+interface Role {
+    title: string;
+    split: number;
+    filled: boolean;
+    description: string;
+    requirements: string[];
+}
+
+interface TimelinePhase {
+    phase: string;
+    duration: string;
+    status: string;
+    payout?: number;
+}
+
+interface Project {
+    id: string;
+    title: string;
+    description: string;
+    budget: number;
+    isRevenueBased?: boolean;
+    status: string;
+    type: string;
+    roles: Role[];
+    deadline: string;
+    applicants: number;
+    category: string;
+    location: string;
+    createdBy: {
+        name: string;
+        avatar: string;
+        reputation: number;
+        projectsCompleted: number;
+    };
+    timeline: TimelinePhase[];
+    duration?: {
+        type: string;
+        startDate: string;
+        endDate: string;
+    };
+    revenueSharing?: {
+        type: string;
+        term: number;
+    };
+}
+
 // Mock data - in a real app, this would come from an API
-const mockProjectDetails: Record<string, any> = {
+const mockProjectDetails: Record<string, Project> = {
     '1': {
         id: '1',
         title: 'AI-Powered Task Manager',
@@ -61,318 +120,6 @@ const mockProjectDetails: Record<string, any> = {
             { phase: 'Sales Outreach', duration: 'Ongoing', status: 'pending' }
         ]
     },
-    '2': {
-        id: '2',
-        title: 'HealthTech Hackathon Prep',
-        description: 'Join a 48-hour sprint to build a patient monitoring dashboard for remote clinics in developing regions. We need a fast, lightweight, and offline-first solution that can help healthcare workers track patient vitals effectively.',
-        budget: 5000,
-        status: 'open',
-        type: 'Hackathon',
-        roles: [
-            {
-                title: 'Full Stack Developer',
-                split: 40,
-                filled: false,
-                description: 'Build the core dashboard prototype using lightweight React components and offline storage.',
-                requirements: ['React', 'PWA experience', 'Data Visualization', 'Offline Storage']
-            },
-            {
-                title: 'Medical Research & Legal',
-                split: 30,
-                filled: false,
-                description: 'Ensure the solution follows healthcare regulations and data privacy ethics for medical info.',
-                requirements: ['Medical Ethics', 'HIPAA/GDPR Knowledge', 'Critical Thinking']
-            },
-            {
-                title: 'Marketing & Pitch Specialist',
-                split: 30,
-                filled: false,
-                description: 'Design the presentation, craft the narrative, and lead the final project pitch.',
-                requirements: ['Public Speaking', 'Pitch Deck Design', 'Storytelling']
-            }
-        ],
-        deadline: '2026-02-28',
-        applicants: 24,
-        category: 'Health',
-        location: 'Hybrid / Nairobi',
-        createdBy: {
-            name: 'David Kim',
-            avatar: 'DK',
-            reputation: 4.9,
-            projectsCompleted: 5
-        },
-        timeline: [
-            { phase: 'Ideation', duration: '6 hours', status: 'completed' },
-            { phase: 'Hacking', duration: '36 hours', status: 'in-progress' },
-            { phase: 'Pitch Prep', duration: '6 hours', status: 'pending' }
-        ]
-    },
-    '3': {
-        id: '3',
-        title: 'Mobile Fitness App',
-        description: 'Creating a social fitness application that rewards users for staying active. The app will include GPS tracking, social challenges, and a marketplace for fitness gear.',
-        budget: 20000,
-        status: 'open',
-        type: 'Startup',
-        roles: [
-            {
-                title: 'Mobile Developer',
-                split: 35,
-                filled: false,
-                description: 'Build the mobile app for iOS and Android with a focus on GPS and social features.',
-                requirements: ['React Native', 'GPS API', 'Firebase']
-            },
-            {
-                title: 'Community Manager',
-                split: 20,
-                filled: false,
-                description: 'Moderate the social feed, manage user challenges, and foster a healthy fitness community.',
-                requirements: ['Social Media Management', 'Community Engagement', 'Moderation']
-            },
-            {
-                title: 'Content Creator / Video',
-                split: 25,
-                filled: false,
-                description: 'Produce high-quality workout videos and social media promotional content.',
-                requirements: ['Video Editing', 'Content Strategy', 'TikTok/Instagram Growth']
-            },
-            {
-                title: 'Partnerships & Sales',
-                split: 20,
-                filled: false,
-                description: 'Negotiate deals with fitness brands for the in-app marketplace.',
-                requirements: ['Partnership Management', 'Sales', 'Negotiation']
-            }
-        ],
-        deadline: '2026-05-20',
-        applicants: 15,
-        category: 'Mobile',
-        location: 'Remote',
-        createdBy: {
-            name: 'Alex Rivera',
-            avatar: 'AR',
-            reputation: 4.7,
-            projectsCompleted: 8
-        },
-        timeline: [
-            { phase: 'MVP Development', duration: '8 weeks' },
-            { phase: 'Beta Testing', duration: '4 weeks' },
-            { phase: 'Community Launch', duration: '2 weeks' }
-        ]
-    },
-    '4': {
-        id: '4',
-        title: 'Blockchain Analytics Dashboard',
-        description: 'Enterprise-grade blockchain analytics for multi-chain monitoring. This dashboard will serve institutional investors by providing real-time data on wallet movements and protocol health.',
-        budget: 30000,
-        status: 'open',
-        type: 'Enterprise',
-        roles: [
-            {
-                title: 'Blockchain Architect',
-                split: 30,
-                filled: false,
-                description: 'Smart contract indexing and building the data pipeline for multi-chain monitoring.',
-                requirements: ['Solidity', 'Indexer Logic', 'System Architecture']
-            },
-            {
-                title: 'Data Analyst',
-                split: 25,
-                filled: false,
-                description: 'Analyze on-chain transaction patterns and create financial health reports.',
-                requirements: ['SQL', 'Data Science', 'On-chain Analytics']
-            },
-            {
-                title: 'Institutional Sales Lead',
-                split: 25,
-                filled: false,
-                description: 'Cold outreach to hedge funds and institutional investors to license the dashboard.',
-                requirements: ['Enterprise Sales', 'Fintech Networking', 'Strategy']
-            },
-            {
-                title: 'Compliance & Legal Officer',
-                split: 20,
-                filled: false,
-                description: 'Ensure the platform meets all regulatory requirements and handles Web3 specific laws.',
-                requirements: ['Crypto Regulation', 'Fintech Law', 'Risk Management']
-            }
-        ],
-        deadline: '2026-06-10',
-        applicants: 6,
-        category: 'Web3',
-        location: 'Remote / London',
-        createdBy: {
-            name: 'Elena Vance',
-            avatar: 'EV',
-            reputation: 5.0,
-            projectsCompleted: 22
-        },
-        timeline: [
-            { phase: 'Architecture Design', duration: '4 weeks' },
-            { phase: 'Core Indexing', duration: '8 weeks' },
-            { phase: 'Compliance Review', duration: '4 weeks' },
-            { phase: 'Institutional Sales Launch', duration: 'Ongoing' }
-        ]
-    },
-    '5': {
-        id: '5',
-        title: 'Eco-Commerce Marketplace',
-        description: 'A dedicated platform for carbon-neutral products and sustainable brands. We aim to create a transparent ecosystem where every purchase contributes to a greener planet through tracked carbon offsets.',
-        budget: 25000,
-        status: 'open',
-        type: 'Startup',
-        roles: [
-            {
-                title: 'Full Stack Engineer',
-                split: 35,
-                filled: false,
-                description: 'Build the marketplace core, integrate payment gateways and carbon offset APIs.',
-                requirements: ['React', 'Node.js', 'Stripe API', 'PostgreSQL']
-            },
-            {
-                title: 'Sustainability Consultant',
-                split: 20,
-                filled: false,
-                description: 'Verify brand sustainability claims and manage the carbon offset portfolio.',
-                requirements: ['Environmental Science', 'Audit Experience', 'Carbon Accounting']
-            },
-            {
-                title: 'Marketing Strategist',
-                split: 25,
-                filled: false,
-                description: 'Develop the launch strategy and manage community engagement for eco-conscious shoppers.',
-                requirements: ['Growth Marketing', 'SEO', 'Community Management', 'PR']
-            },
-            {
-                title: 'Supply Chain Lead',
-                split: 20,
-                filled: false,
-                description: 'Onboard sustainable manufacturers and ensure ethical logistics partners.',
-                requirements: ['Logistics', 'Procurement', 'Sustainability Standards']
-            }
-        ],
-        deadline: '2026-07-22',
-        applicants: 8,
-        category: 'E-Commerce',
-        location: 'Berlin / Remote',
-        createdBy: {
-            name: 'Marcus Thorne',
-            avatar: 'MT',
-            reputation: 4.6,
-            projectsCompleted: 4
-        },
-        timeline: [
-            { phase: 'Brand Onboarding', duration: '4 weeks' },
-            { phase: 'Platform MVP', duration: '10 weeks' },
-            { phase: 'Public Beta', duration: '4 weeks' }
-        ]
-    },
-    '6': {
-        id: '6',
-        title: 'Immersive VR Language School',
-        description: 'Practice languages in hyper-realistic VR environments with AI tutors. Students can visit virtual cafes, markets, and airports to practice conversational skills in context.',
-        budget: 45000,
-        status: 'open',
-        type: 'Enterprise',
-        roles: [
-            {
-                title: 'Unity Developer',
-                split: 30,
-                filled: false,
-                description: 'Lead developer for VR environments and core interaction mechanics.',
-                requirements: ['Unity', 'C#', 'Oculus SDK', '3D Optimization']
-            },
-            {
-                title: 'AI Training Specialist',
-                split: 25,
-                filled: false,
-                description: 'Design and train NLP models for context-aware AI language tutors.',
-                requirements: ['NLP', 'Python', 'MLOps', 'Large Language Models']
-            },
-            {
-                title: 'Curriculum Designer',
-                split: 20,
-                filled: false,
-                description: 'Structure language learning pathways for different proficiency levels.',
-                requirements: ['Linguistics', 'Instructional Design', 'Language Teaching']
-            },
-            {
-                title: 'Sound Engineer',
-                split: 25,
-                filled: false,
-                description: 'Create spatial audio experiences and implement high-quality TTS voice synthesis.',
-                requirements: ['Spatial Audio', 'Unity Audio', 'Wwise', 'Audio Engineering']
-            }
-        ],
-        deadline: '2026-09-05',
-        applicants: 4,
-        category: 'EdTech',
-        location: 'Tokyo / Remote',
-        createdBy: {
-            name: 'Sofia Rodriguez',
-            avatar: 'SR',
-            reputation: 4.9,
-            projectsCompleted: 15
-        },
-        timeline: [
-            { phase: 'Environment Prototyping', duration: '6 weeks' },
-            { phase: 'AI Integration', duration: '8 weeks' },
-            { phase: 'Vocal Synthesis', duration: '4 weeks' }
-        ]
-    },
-    '7': {
-        id: '7',
-        title: 'Micro-Credit DeFi Portal',
-        description: 'Enabling peer-to-peer lending for emerging markets via stablecoins. We use alternative data for credit scoring to provide financial access to the unbanked.',
-        budget: 40000,
-        status: 'open',
-        type: 'Startup',
-        roles: [
-            {
-                title: 'Smart Contract Lead',
-                split: 35,
-                filled: false,
-                description: 'Architecting the lending pools and managing smart contract security.',
-                requirements: ['Solidity', 'Protocol Design', 'Security Audits']
-            },
-            {
-                title: 'Mobile Engineer',
-                split: 25,
-                filled: false,
-                description: 'Develop the user-facing mobile app with a focus on ease of use and low-bandwidth environments.',
-                requirements: ['React Native', 'Mobile Security', 'Offline-first Design']
-            },
-            {
-                title: 'Risk Analyst',
-                split: 20,
-                filled: false,
-                description: 'Develop AI-driven credit scoring models using non-traditional financial data.',
-                requirements: ['Data Science', 'Risk Modeling', 'Python', 'Statistics']
-            },
-            {
-                title: 'Regional Operations Manager',
-                split: 20,
-                filled: false,
-                description: 'Establish local partnerships with non-profits and agents in key markets.',
-                requirements: ['Business Development', 'Cross-cultural Communication', 'Operations']
-            }
-        ],
-        deadline: '2026-08-15',
-        applicants: 19,
-        category: 'DeFi',
-        location: 'Nairobi / Remote',
-        createdBy: {
-            name: 'Kofi Mensah',
-            avatar: 'KM',
-            reputation: 4.8,
-            projectsCompleted: 7
-        },
-        timeline: [
-            { phase: 'Credit Protocol Build', duration: '8 weeks' },
-            { phase: 'Pilot in Target Market', duration: '4 weeks' },
-            { phase: 'Global Expansion', duration: 'Ongoing' }
-        ]
-    },
     '8': {
         id: '8',
         title: 'Global Artisan Collective (Etsy Partnership)',
@@ -425,8 +172,6 @@ const mockProjectDetails: Record<string, any> = {
     }
 };
 
-const getSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
-
 const statusColors = {
     open: 'success',
     'in-progress': 'warning',
@@ -450,16 +195,11 @@ export function ProjectDetails() {
 
         // Check localStorage (pending or approved - for now we check pending)
         const pending = JSON.parse(localStorage.getItem('pendingProjects') || '[]');
-        const found = pending.find((p: any) => p.id === id);
+        const found = pending.find((p: Project) => p.id === id);
         return found || null;
     };
 
     const project = getProject();
-
-    const handleApply = () => {
-        setHasApplied(true);
-        // Mock API call would go here
-    };
 
     if (!project) {
         return (
@@ -475,8 +215,11 @@ export function ProjectDetails() {
         );
     }
 
-    // Calculate remaining time for project and revenue sharing
-    const getRemainingTime = (endDate: string | null) => {
+    const handleApply = () => {
+        setHasApplied(true);
+    };
+
+    const getRemainingTime = (endDate: string | undefined) => {
         if (!endDate) return null;
         const end = new Date(endDate).getTime();
         const now = new Date().getTime();
@@ -494,10 +237,6 @@ export function ProjectDetails() {
     const projectRemaining = project.duration?.type === 'fixed'
         ? getRemainingTime(project.duration.endDate)
         : null;
-
-    // Revenue sharing status calculation (simplified for demo)
-    const revenueStatus = project.revenueSharing?.type === 'fixed-term' ? 'Active' : project.revenueSharing?.type === 'ongoing' ? 'Ongoing' : 'One-time';
-    const revenueRemaining = project.revenueSharing?.type === 'fixed-term' ? `${project.revenueSharing.term} months total` : null;
 
     return (
         <div className="min-h-screen bg-slate-50 py-8">
@@ -573,7 +312,7 @@ export function ProjectDetails() {
                             <CardContent>
                                 <div
                                     className="flex items-center gap-3 mb-4 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
-                                    onClick={() => navigate(`/profile/${getSlug(project.createdBy.name)}`)}
+                                    onClick={() => navigate(`/profile/${project.createdBy.name.toLowerCase().replace(/\s+/g, '-')}`)}
                                 >
                                     <div className="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center text-white font-semibold">
                                         {project.createdBy.avatar}
@@ -598,67 +337,69 @@ export function ProjectDetails() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Revenue Simulator - Only show for revenue projects or optionally for all */}
-                        <Card className="bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-xl overflow-hidden relative">
-                            <div className="absolute top-0 right-0 p-8 opacity-10">
-                                <TrendingUp className="h-32 w-32" />
-                            </div>
-                            <CardHeader>
-                                <CardTitle className="text-white flex items-center gap-2">
-                                    <TrendingUp className="h-5 w-5 text-primary-400" />
-                                    Revenue Split Simulator
-                                </CardTitle>
-                                <CardDescription className="text-slate-300">
-                                    Estimate monthly sales to see how revenue is distributed across roles.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6 relative z-10">
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-end mb-2">
-                                        <label className="text-sm font-medium text-slate-300">Estimated Monthly Revenue</label>
-                                        <span className="text-2xl font-bold text-primary-400">${simulatedRevenue.toLocaleString()}</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min="1000"
-                                        max="100000"
-                                        step="1000"
-                                        value={simulatedRevenue}
-                                        onChange={(e) => setSimulatedRevenue(Number(e.target.value))}
-                                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-500"
-                                    />
-                                    <div className="flex justify-between text-xs text-slate-400">
-                                        <span>$1,000</span>
-                                        <span>$50,000</span>
-                                        <span>$100,000+</span>
-                                    </div>
+                        {/* Revenue Simulator */}
+                        {project.isRevenueBased && (
+                            <Card className="bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-xl overflow-hidden relative">
+                                <div className="absolute top-0 right-0 p-8 opacity-10">
+                                    <TrendingUp className="h-32 w-32" />
                                 </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700">
-                                    {project.roles.map((role: any, idx: number) => (
-                                        <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <span className="text-sm font-medium text-slate-300">{role.title}</span>
-                                                <Badge variant="outline" className="border-slate-600 text-slate-400 text-[10px] uppercase tracking-wider">
-                                                    {role.split}%
-                                                </Badge>
-                                            </div>
-                                            <p className="text-xl font-bold text-white">
-                                                ${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()}
-                                                <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
-                                            </p>
+                                <CardHeader>
+                                    <CardTitle className="text-white flex items-center gap-2">
+                                        <TrendingUp className="h-5 w-5 text-primary-400" />
+                                        Revenue Split Simulator
+                                    </CardTitle>
+                                    <CardDescription className="text-slate-300">
+                                        Estimate monthly sales to see how revenue is distributed across roles.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-6 relative z-10">
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-end mb-2">
+                                            <label className="text-sm font-medium text-slate-300">Estimated Monthly Revenue</label>
+                                            <span className="text-2xl font-bold text-primary-400">${simulatedRevenue.toLocaleString()}</span>
                                         </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
+                                        <input
+                                            type="range"
+                                            min="1000"
+                                            max="100000"
+                                            step="1000"
+                                            value={simulatedRevenue}
+                                            onChange={(e) => setSimulatedRevenue(Number(e.target.value))}
+                                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                                        />
+                                        <div className="flex justify-between text-xs text-slate-400">
+                                            <span>$1,000</span>
+                                            <span>$50,000</span>
+                                            <span>$100,000+</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                                        {project.roles.map((role, idx) => (
+                                            <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <span className="text-sm font-medium text-slate-300">{role.title}</span>
+                                                    <Badge variant="outline" className="border-slate-600 text-slate-400 text-[10px] uppercase tracking-wider">
+                                                        {role.split}%
+                                                    </Badge>
+                                                </div>
+                                                <p className="text-xl font-bold text-white">
+                                                    ${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()}
+                                                    <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* Open Roles */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Open Roles & Revenue Split</CardTitle>
                                 <CardDescription>
-                                    {project.roles.filter((r: any) => !r.filled).length} positions available
+                                    {project.roles.filter((r) => !r.filled).length} positions available
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -666,67 +407,36 @@ export function ProjectDetails() {
                                 <div className="bg-slate-50 rounded-lg p-4">
                                     <p className="text-sm font-medium text-slate-700 mb-3">Revenue Distribution</p>
                                     <div className="flex h-3 rounded-full overflow-hidden bg-slate-200 mb-3">
-                                        {project.roles.map((role: any, idx: number) => (
+                                        {project.roles.map((role, idx) => (
                                             <div
                                                 key={idx}
                                                 style={{ width: `${role.split}%` }}
                                                 className={`h-full ${idx === 0 ? 'bg-primary-500' :
                                                     idx === 1 ? 'bg-blue-500' :
                                                         idx === 2 ? 'bg-green-500' :
-                                                            'bg-yellow-500'
-                                                    }`}
+                                                            'bg-yellow-500'}`}
                                                 title={`${role.title}: ${role.split}%`}
                                             />
                                         ))}
                                     </div>
                                     <div className="grid grid-cols-2 gap-2 text-xs">
-                                        {project.roles.map((role: any, idx: number) => (
+                                        {project.roles.map((role, idx) => (
                                             <div key={idx} className="flex items-center gap-2">
                                                 <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-primary-500' :
                                                     idx === 1 ? 'bg-blue-500' :
                                                         idx === 2 ? 'bg-green-500' :
-                                                            'bg-yellow-500'
-                                                    }`} />
+                                                            'bg-yellow-500'}`} />
                                                 <span className="text-slate-600 truncate">{role.title}</span>
                                                 <span className="text-slate-900 font-semibold">{role.split}%</span>
                                             </div>
                                         ))}
                                     </div>
-
-                                    {/* Financial Summary Table */}
-                                    <div className="mt-4 pt-4 border-t border-slate-200">
-                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Financial Payout Summary</p>
-                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                            <div className="flex items-center gap-2 mb-4 text-slate-900 font-semibold">
-                                                <DollarSign className="h-4 w-4 text-primary-500" />
-                                                {project.isRevenueBased ? 'Simulated Monthly Distribution' : 'Total Budget Distribution'}
-                                            </div>
-                                            <div className="space-y-3">
-                                                {project.roles.map((role: any, index: number) => (
-                                                    <div key={index} className="flex justify-between text-sm items-center">
-                                                        <span className="text-slate-600 font-medium">{role.title}:</span>
-                                                        <span className="text-slate-900 font-bold">
-                                                            {project.isRevenueBased
-                                                                ? `$${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()} / mo`
-                                                                : `$${((project.budget * role.split) / 100).toLocaleString()}`
-                                                            }
-                                                            <span className="text-slate-500 font-normal ml-1">({role.split}%)</span>
-                                                        </span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
-                                {/* Role Cards */}
-                                {project.roles.map((role: any, index: number) => (
+                                {project.roles.map((role, index) => (
                                     <div
                                         key={index}
-                                        className={`p-4 rounded-lg border-2 ${role.filled
-                                            ? 'bg-slate-50 border-slate-200'
-                                            : 'bg-white border-primary-200'
-                                            }`}
+                                        className={`p-4 rounded-lg border-2 ${role.filled ? 'bg-slate-50 border-slate-200' : 'bg-white border-primary-200'}`}
                                     >
                                         <div className="flex items-start justify-between mb-3">
                                             <div>
@@ -734,35 +444,22 @@ export function ProjectDetails() {
                                                 <p className="text-sm text-slate-600">{role.description}</p>
                                             </div>
                                             <div className="text-right">
-                                                <Badge variant={role.filled ? 'secondary' : 'primary'}>
+                                                <Badge variant={role.filled ? 'secondary' : 'default'}>
                                                     {role.filled ? 'Filled' : `${role.split}% split`}
                                                 </Badge>
                                                 <p className="text-sm font-semibold text-slate-900 mt-1">
                                                     {project.isRevenueBased
                                                         ? `$${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()} (est/mo)`
-                                                        : `$${((project.budget * role.split) / 100).toLocaleString()}`
-                                                    }
+                                                        : `$${((project.budget * role.split) / 100).toLocaleString()}`}
                                                 </p>
                                             </div>
                                         </div>
-
                                         {role.requirements && (
-                                            <div className="mb-3">
-                                                <p className="text-xs font-medium text-slate-700 mb-2">Requirements:</p>
-                                                <div className="flex flex-wrap gap-1">
-                                                    {role.requirements.map((req: string, idx: number) => (
-                                                        <Badge key={idx} variant="outline" className="text-xs">
-                                                            {req}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
+                                            <div className="flex flex-wrap gap-1 mt-2">
+                                                {role.requirements.map((req, idx) => (
+                                                    <Badge key={idx} variant="outline" className="text-[10px]">{req}</Badge>
+                                                ))}
                                             </div>
-                                        )}
-
-                                        {!role.filled && (
-                                            <Button variant="outline" className="w-full mt-2">
-                                                Apply for this Role
-                                            </Button>
                                         )}
                                     </div>
                                 ))}
@@ -776,8 +473,8 @@ export function ProjectDetails() {
                                 <CardDescription>Estimated phases and duration</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-3">
-                                    {project.timeline.map((phase: any, index: number) => (
+                                <div className="space-y-4">
+                                    {project.timeline.map((phase, index) => (
                                         <div key={index} className="flex items-start gap-4">
                                             <div className="mt-1">
                                                 {phase.status === 'completed' ? (
@@ -795,23 +492,16 @@ export function ProjectDetails() {
                                                 )}
                                             </div>
                                             <div className="flex-1">
-                                                <div className="flex items-center justify-between mb-0.5">
+                                                <div className="flex items-center justify-between">
                                                     <p className="font-semibold text-slate-900">{phase.phase}</p>
-                                                    <Badge
-                                                        variant="outline"
-                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0 ${phase.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                            phase.status === 'in-progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                                'bg-slate-50 text-slate-500 border-slate-200'
-                                                            }`}
-                                                    >
+                                                    <Badge variant="outline" className="text-[10px] uppercase">
                                                         {phase.status || 'pending'}
                                                     </Badge>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-sm">
-                                                    <span className="text-slate-500">{phase.duration}</span>
+                                                <div className="flex items-center gap-3 text-sm text-slate-500">
+                                                    <span>{phase.duration}</span>
                                                     {phase.payout && (
-                                                        <span className="flex items-center gap-1 text-green-600 font-medium">
-                                                            <ShieldCheck className="h-3 w-3" />
+                                                        <span className="text-green-600 font-medium">
                                                             ${phase.payout.toLocaleString()} Released
                                                         </span>
                                                     )}
@@ -826,197 +516,115 @@ export function ProjectDetails() {
 
                     {/* Sidebar */}
                     <div className="space-y-6">
-                        {/* Escrow Vault Card */}
-                        <Card className="bg-gradient-to-br from-primary-900 to-indigo-900 text-white border-none overflow-hidden relative shadow-lg">
+                        {/* Escrow Vault */}
+                        <Card className="bg-slate-900 text-white overflow-hidden relative border-none shadow-xl">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <ShieldCheck className="h-24 w-24 text-white" />
+                                <ShieldCheck className="h-24 w-24" />
                             </div>
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-base flex items-center gap-2 text-white">
-                                    <ShieldCheck className="h-4 w-4 text-primary-300" />
-                                    Platform Escrow Vault
+                                <CardTitle className="text-base flex items-center gap-2">
+                                    <ShieldCheck className="h-4 w-4 text-primary-400" />
+                                    Escrow Vault
                                 </CardTitle>
-                                <CardDescription className="text-primary-100/70 text-xs">Platform-protected project funds</CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-4 relative z-10 text-white">
-                                <div className="p-3 bg-white/10 rounded-lg border border-white/10">
-                                    <p className="text-[10px] font-bold text-primary-200 uppercase tracking-widest mb-1">
-                                        {project.isRevenueBased ? 'Total Revenue Distributed' : 'Total Vault Balance'}
+                            <CardContent className="space-y-4">
+                                <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                    <p className="text-[10px] uppercase text-slate-400 mb-1">Vault Balance</p>
+                                    <p className="text-2xl font-bold">
+                                        {project.isRevenueBased
+                                            ? `$${project.timeline.reduce((acc, p) => acc + (p.payout || 0), 0).toLocaleString()}`
+                                            : `$${(project.budget - project.timeline.reduce((acc, p) => acc + (p.payout || 0), 0)).toLocaleString()}`}
                                     </p>
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-2xl font-bold">
-                                            {project.isRevenueBased
-                                                ? `$${(project.timeline.reduce((acc: number, p: any) => acc + (p.payout || 0), 0)).toLocaleString()}`
-                                                : `$${(project.budget - (project.timeline.reduce((acc: number, p: any) => acc + (p.payout || 0), 0))).toLocaleString()}`
-                                            }
-                                        </p>
-                                        <Badge variant="secondary" className="bg-primary-500 text-white border-none text-[10px]">
-                                            {project.isRevenueBased ? 'LIVE' : 'LOCKED'}
-                                        </Badge>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-white/20 text-white hover:bg-white/10 text-xs gap-2"
+                                    onClick={() => navigate(`/projects/${id}/finance`)}
+                                >
+                                    <Activity className="h-3 w-3" />
+                                    Financial Transparency
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        {/* Agreement Terms */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-base">Agreement Terms</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <p className="text-xs font-bold text-slate-500 uppercase">Project Duration</p>
+                                    <div className="p-3 bg-slate-50 rounded border border-slate-100 text-sm">
+                                        {project.duration?.type === 'fixed'
+                                            ? `${new Date(project.duration.startDate).toLocaleDateString()} - ${new Date(project.duration.endDate).toLocaleDateString()}`
+                                            : 'Ongoing'}
+                                        {projectRemaining && <p className="text-primary-600 font-medium mt-1">{projectRemaining}</p>}
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <p className="text-[10px] font-bold text-primary-200 uppercase tracking-widest">Recent Distributions</p>
-                                    <div className="space-y-1.5">
-                                        {project.timeline.filter((p: any) => p.payout).map((p: any, i: number) => (
-                                            <div key={i} className="flex justify-between items-center text-xs p-2 bg-white/5 rounded border border-white/5">
-                                                <span className="text-white/80">{p.phase}</span>
-                                                <span className="font-bold text-green-300">+${p.payout.toLocaleString()}</span>
-                                            </div>
-                                        ))}
-                                        {!project.timeline.some((p: any) => p.payout) && (
-                                            <p className="text-xs text-white/50 italic py-2">No funds released yet</p>
-                                        )}
+                                    <p className="text-xs font-bold text-slate-500 uppercase">Revenue Model</p>
+                                    <div className="p-3 bg-slate-50 rounded border border-slate-100 text-sm">
+                                        {project.revenueSharing?.type === 'fixed-term' ? `${project.revenueSharing.term} Month Term` : 'Standard Split'}
+                                        <p className="text-slate-500 text-[10px] mt-1 italic">Verified by Platform</p>
                                     </div>
                                 </div>
-                                <Button className="w-full bg-white text-primary-900 hover:bg-primary-50 text-xs h-8">
-                                    View Transaction History
-                                </Button>
                             </CardContent>
                         </Card>
 
-                        {/* Workspace Link (Demo) */}
-                        <Card className="bg-slate-900 text-white">
+                        {/* Apply / Huddle */}
+                        <Card className="border-2 border-primary-100">
                             <CardHeader>
-                                <CardTitle className="text-base text-white">Project Workspace</CardTitle>
+                                <CardTitle className="text-base">Interested?</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <p className="text-slate-300 text-sm">Access team tools, shared documents, and secure internal communication.</p>
-                                <Button
-                                    onClick={() => navigate(`/projects/${project.id}/workspace`)}
-                                    className="w-full bg-white text-slate-900 hover:bg-slate-100"
-                                >
-                                    Open Workspace
-                                </Button>
-                            </CardContent>
-                        </Card>
-
-                        {/* Duration & Revenue Agreement Card */}
-                        <Card className="border-l-4 border-l-primary-500 overflow-hidden">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-base flex items-center justify-between">
-                                    Agreement Terms
-                                    <Badge variant="outline" className="bg-primary-50 text-primary-700 border-primary-200">Locked</Badge>
-                                </CardTitle>
-                                <CardDescription>Time-bound collaboration terms</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-tight">
-                                        <span>Project Duration</span>
-                                        {projectRemaining && <span className="text-primary-600 normal-case font-semibold">{projectRemaining}</span>}
-                                    </div>
-                                    <div className="p-2 bg-slate-50 rounded border border-slate-100">
-                                        <p className="text-sm font-semibold text-slate-900">
-                                            {project.duration?.type === 'fixed'
-                                                ? `${new Date(project.duration.startDate).toLocaleDateString()} - ${new Date(project.duration.endDate).toLocaleDateString()}`
-                                                : 'Ongoing Collaboration'
-                                            }
-                                        </p>
-                                        {project.duration?.type === 'ongoing' && project.duration.reviewDate && (
-                                            <p className="text-[10px] text-slate-500 mt-0.5 italic">Next Review: {new Date(project.duration.reviewDate).toLocaleDateString()}</p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-tight">
-                                        <span>Revenue Sharing</span>
-                                        <span className={`text-[10px] px-1.5 rounded-full ${revenueStatus === 'Active' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                                            }`}>{revenueStatus}</span>
-                                    </div>
-                                    <div className="p-2 bg-slate-50 rounded border border-slate-100">
-                                        <p className="text-sm font-semibold text-slate-900">
-                                            {project.revenueSharing?.type === 'one-time' && 'One-time Payout'}
-                                            {project.revenueSharing?.type === 'fixed-term' && `${project.revenueSharing.term} Months Fixed Term`}
-                                            {project.revenueSharing?.type === 'ongoing' && 'Ongoing Distribution'}
-                                            {!project.revenueSharing && 'Standard Split'}
-                                        </p>
-                                        {revenueRemaining && (
-                                            <p className="text-[10px] text-slate-500 mt-0.5 italic">{revenueRemaining} distributed monthly after completion.</p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="pt-2">
-                                    <p className="text-[10px] text-slate-400 text-center uppercase tracking-widest font-bold">Guaranteed by Platform Agreement</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Apply Card */}
-                        <Card className="border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white">
-                            <CardHeader>
-                                <CardTitle className="text-primary-900">Interested?</CardTitle>
-                                <CardDescription>Join this project and start earning</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-3">
                                 {!hasApplied && (
-                                    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200">
+                                    <div className="flex items-start gap-2 mb-2">
                                         <input
                                             type="checkbox"
-                                            id="agreement"
+                                            id="agree"
+                                            className="mt-1"
                                             checked={hasAgreed}
                                             onChange={(e) => setHasAgreed(e.target.checked)}
-                                            className="mt-1 h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                                         />
-                                        <label htmlFor="agreement" className="text-xs text-slate-600 leading-tight cursor-pointer">
-                                            I agree to the project roles and revenue split defined above.
-                                        </label>
+                                        <label htmlFor="agree" className="text-xs text-slate-600">I agree to the terms and revenue splits.</label>
                                     </div>
                                 )}
                                 <Button
                                     className="w-full"
-                                    size="lg"
                                     onClick={handleApply}
-                                    disabled={hasApplied || (!hasAgreed && !hasApplied)}
-                                    variant={hasApplied ? "secondary" : "default"}
+                                    disabled={hasApplied || !hasAgreed}
                                 >
-                                    {hasApplied ? "Application Sent" : "Apply Now"}
+                                    {hasApplied ? 'Application Sent' : 'Apply Now'}
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="w-full border-primary-200 text-primary-700 hover:bg-primary-50 gap-2"
+                                    className="w-full gap-2 border-primary-200 text-primary-700"
                                     onClick={() => navigate(`/projects/${id}/huddle`)}
                                 >
                                     <MessageCircle className="h-4 w-4" />
-                                    Negotiate Terms (The Huddle)
-                                </Button>
-                                <Button variant="ghost" className="w-full text-slate-500">
-                                    Save for Later
+                                    Enter The Huddle
                                 </Button>
                             </CardContent>
                         </Card>
 
-                        {/* Stats Card */}
+                        {/* Project Stats */}
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-base">Project Stats</CardTitle>
+                                <CardTitle className="text-base">Impact Snapshot</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-3 text-sm">
+                            <CardContent className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Open Positions</span>
-                                    <span className="font-semibold text-slate-900">
-                                        {project.roles.filter((r: any) => !r.filled).length}
-                                    </span>
+                                    <span className="text-slate-500">Applicants</span>
+                                    <span className="font-bold">{project.applicants}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Total Roles</span>
-                                    <span className="font-semibold text-slate-900">{project.roles.length}</span>
+                                    <span className="text-slate-500">Category</span>
+                                    <span className="font-bold">{project.category}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">
-                                        {project.isRevenueBased ? 'Revenue Share' : 'Avg. Revenue/Role'}
-                                    </span>
-                                    <span className="font-semibold text-slate-900">
-                                        {project.isRevenueBased ? 'Sales-Based' : `$${Math.round(project.budget / project.roles.length).toLocaleString()}`}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-600">Days Until Deadline</span>
-                                    <span className="font-semibold text-slate-900">
-                                        {Math.ceil((new Date(project.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))}
-                                    </span>
+                                    <span className="text-slate-500">Role Status</span>
+                                    <span className="font-bold text-primary-600">{project.roles.filter((r) => !r.filled).length} Open</span>
                                 </div>
                             </CardContent>
                         </Card>

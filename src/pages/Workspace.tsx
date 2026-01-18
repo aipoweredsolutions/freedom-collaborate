@@ -58,7 +58,7 @@ export function Workspace() {
     const [activeTab, setActiveTab] = useState('tasks');
     const [tasks, setTasks] = useState(initialTasks);
     const [messages, setMessages] = useState(initialMessages);
-    const [fileList, _setFileList] = useState(initialFiles);
+    const [fileList] = useState(initialFiles);
     const [newMessage, setNewMessage] = useState('');
 
     // New Task State

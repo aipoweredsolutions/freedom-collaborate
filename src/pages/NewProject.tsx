@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Plus, Trash2, AlertCircle } from 'lucide-react';
@@ -574,7 +575,7 @@ export function NewProject() {
                                 <div className="border-t border-slate-200 pt-6">
                                     <h3 className="font-semibold text-slate-900 mb-3">Team Roles ({roles.length})</h3>
                                     <div className="space-y-3">
-                                        {roles.map((role, _index) => (
+                                        {roles.map((role) => (
                                             <div key={role.id} className="p-3 bg-slate-50 rounded-lg">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="font-medium text-slate-900">{role.title}</span>

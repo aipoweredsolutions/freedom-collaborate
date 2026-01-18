@@ -3,18 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
     Send,
-    MessageCircle,
     ShieldCheck,
     Calendar,
-    DollarSign,
     Clock,
     TrendingUp,
     FileText,
-    Users,
     ChevronRight,
     Lock
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -120,14 +116,13 @@ export function Huddle() {
                                     key={msg.id}
                                     className={`flex items-end gap-3 ${msg.isMe ? 'flex-row-reverse' : ''}`}
                                 >
-                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${msg.isMe ? 'bg-slate-700' : 'bg-primary-600'
-                                        }`}>
+                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${msg.isMe ? 'bg-slate-700' : 'bg-primary-600'}`}>
                                         {msg.sender[0]}
                                     </div>
                                     <div className={`max-w-[70%] space-y-1 ${msg.isMe ? 'items-end' : ''}`}>
                                         <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-xl ${msg.isMe
-                                                ? 'bg-primary-600 text-white rounded-br-none'
-                                                : 'bg-white/10 backdrop-blur-md border border-white/10 text-slate-100 rounded-bl-none'
+                                            ? 'bg-primary-600 text-white rounded-br-none'
+                                            : 'bg-white/10 backdrop-blur-md border border-white/10 text-slate-100 rounded-bl-none'
                                             }`}>
                                             {msg.text}
                                         </div>

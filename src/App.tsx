@@ -15,6 +15,7 @@ import { Workspace } from './pages/Workspace';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { UserProfile } from './pages/UserProfile';
 import { Huddle } from './pages/Huddle';
+import { ProjectFinance } from './pages/ProjectFinance';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -52,6 +53,11 @@ function App() {
             <Route path="projects/:id/huddle" element={
               <ProtectedRoute>
                 <Huddle />
+              </ProtectedRoute>
+            } />
+            <Route path="projects/:id/finance" element={
+              <ProtectedRoute>
+                <ProjectFinance />
               </ProtectedRoute>
             } />
             <Route path="team" element={<TeamMatching />} />
