@@ -107,7 +107,7 @@ export function NewProject() {
         (durationSelection === 'fixed' ? (startDate && endDate) : true);
     const canProceedStep2 = roles.length > 0 &&
         roles.every(r => r.title && r.split > 0) &&
-        totalSplit === 100 &&
+        totalSplit === 95 &&
         (revenueSharingDuration === 'fixed-term' ? Number(revenueSharingTerm) > 0 : true);
 
     return (
@@ -404,24 +404,33 @@ export function NewProject() {
                                 </Button>
 
                                 {/* Revenue Split Summary */}
-                                <div className={`p-4 rounded-lg border-2 ${totalSplit === 100 ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
+                                <div className={`p-4 rounded-lg border-2 ${totalSplit === 95 ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
                                     }`}>
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="font-semibold text-slate-900">Total Revenue Split</span>
-                                        <Badge variant={totalSplit === 100 ? 'success' : 'warning'}>
-                                            {totalSplit}%
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-slate-900">Total Revenue Allocation</span>
+                                            <span className="text-[10px] text-slate-500 italic">Roles (95%) + Platform Fee (5%)</span>
+                                        </div>
+                                        <Badge variant={totalSplit === 95 ? 'success' : 'warning'}>
+                                            {totalSplit + 5}%
                                         </Badge>
                                     </div>
 
-                                    {totalSplit !== 100 && (
+                                    {totalSplit !== 95 && (
                                         <div className="flex items-start gap-2 text-sm text-yellow-800">
                                             <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                            <p>Total must equal 100%. Currently {totalSplit > 100 ? 'over' : 'under'} by {Math.abs(100 - totalSplit)}%</p>
+                                            <p>Roles must total 95% (remaining 5% is platform fee). Currently {(totalSplit + 5) > 100 ? 'over' : 'under'} by {Math.abs(95 - totalSplit)}%</p>
                                         </div>
                                     )}
 
                                     {/* Visual Split Bar */}
                                     <div className="mt-3 h-3 rounded-full overflow-hidden bg-slate-200 flex">
+                                        {/* Fixed Platform Fee Slice */}
+                                        <div
+                                            style={{ width: '5%' }}
+                                            className="h-full bg-slate-900"
+                                            title="Platform Fee: 5%"
+                                        />
                                         {roles.map((role, idx) => (
                                             role.split > 0 && (
                                                 <div
@@ -437,6 +446,16 @@ export function NewProject() {
                                                 />
                                             )
                                         ))}
+                                    </div>
+                                    <div className="mt-2 flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                        <div className="flex items-center gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-slate-900" />
+                                            Platform (5%)
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-primary-500" />
+                                            Collaborators ({totalSplit}%)
+                                        </div>
                                     </div>
                                 </div>
 
@@ -589,7 +608,7 @@ export function NewProject() {
                                                     <p className="text-sm text-slate-600">{role.description}</p>
                                                 )}
                                                 <p className="text-sm text-slate-500 mt-1">
-                                                    Revenue: ${((Number(budget) * role.split) / 100).toLocaleString()}
+                                                    Est. Share: ${((Number(budget) * 0.95 * role.split) / 100).toLocaleString()} <span className="text-[10px] text-slate-400 italic">(after 5% platform fee)</span>
                                                 </p>
                                             </div>
                                         ))}

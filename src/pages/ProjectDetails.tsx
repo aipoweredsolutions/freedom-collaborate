@@ -509,32 +509,35 @@ export function ProjectDetails() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-700">
-                                        {/* Platform Fee Card in Simulator */}
-                                        <div className="p-4 bg-slate-900/80 rounded-xl border border-primary-500/30">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <span className="text-sm font-medium text-primary-400">Platform Fee</span>
-                                                <Badge variant="outline" className="border-primary-500/30 text-primary-400 text-[10px] uppercase tracking-wider">
-                                                    5%
-                                                </Badge>
-                                            </div>
-                                            <p className="text-xl font-bold text-white">
-                                                ${Math.round(simulatedRevenue * 0.05).toLocaleString()}
-                                                <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
-                                            </p>
+                                    <div className="mb-6 p-4 bg-primary-950/40 rounded-xl border border-primary-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                                        <div className="text-center sm:text-left">
+                                            <p className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-1">Monthly Gross</p>
+                                            <p className="text-2xl font-bold text-white">${simulatedRevenue.toLocaleString()}</p>
                                         </div>
+                                        <div className="h-px w-8 bg-slate-700 hidden sm:block" />
+                                        <div className="text-center sm:text-left">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Platform Fee (5%)</p>
+                                            <p className="text-xl font-bold text-slate-300">-${Math.round(simulatedRevenue * 0.05).toLocaleString()}</p>
+                                        </div>
+                                        <div className="h-px w-8 bg-slate-700 hidden sm:block" />
+                                        <div className="text-center sm:text-left">
+                                            <p className="text-[10px] font-bold text-green-400 uppercase tracking-widest mb-1">Net Team Pool</p>
+                                            <p className="text-2xl font-bold text-green-500">${Math.round(simulatedRevenue * 0.95).toLocaleString()}</p>
+                                        </div>
+                                    </div>
 
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-700/50">
                                         {project.roles.map((role: any, idx: number) => (
-                                            <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
+                                            <div key={idx} className="p-4 bg-slate-800/30 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-all group">
                                                 <div className="flex justify-between items-start mb-2">
-                                                    <span className="text-sm font-medium text-slate-300">{role.title}</span>
-                                                    <Badge variant="outline" className="border-slate-600 text-slate-400 text-[10px] uppercase tracking-wider">
-                                                        {role.split}%
+                                                    <span className="text-xs font-medium text-slate-400 group-hover:text-slate-200">{role.title}</span>
+                                                    <Badge variant="outline" className="border-slate-700 text-slate-500 text-[9px] uppercase tracking-tighter">
+                                                        {role.split}% Split
                                                     </Badge>
                                                 </div>
-                                                <p className="text-xl font-bold text-white">
+                                                <p className="text-lg font-bold text-white">
                                                     ${Math.round((simulatedRevenue * 0.95 * role.split) / 100).toLocaleString()}
-                                                    <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
+                                                    <span className="text-[10px] text-slate-500 font-normal ml-1">/ mo</span>
                                                 </p>
                                             </div>
                                         ))}
@@ -609,8 +612,8 @@ export function ProjectDetails() {
                                                 </Badge>
                                                 <p className="text-sm font-semibold text-slate-900 mt-1">
                                                     {project.isRevenueBased
-                                                        ? `$${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()} (est/mo)`
-                                                        : `$${((project.budget * role.split) / 100).toLocaleString()}`}
+                                                        ? `$${Math.round((simulatedRevenue * 0.95 * role.split) / 100).toLocaleString()} (est/mo)`
+                                                        : `$${((project.budget * 0.95 * role.split) / 100).toLocaleString()}`}
                                                 </p>
                                             </div>
                                         </div>
