@@ -509,7 +509,21 @@ export function ProjectDetails() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-700">
+                                        {/* Platform Fee Card in Simulator */}
+                                        <div className="p-4 bg-slate-900/80 rounded-xl border border-primary-500/30">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <span className="text-sm font-medium text-primary-400">Platform Fee</span>
+                                                <Badge variant="outline" className="border-primary-500/30 text-primary-400 text-[10px] uppercase tracking-wider">
+                                                    5%
+                                                </Badge>
+                                            </div>
+                                            <p className="text-xl font-bold text-white">
+                                                ${Math.round(simulatedRevenue * 0.05).toLocaleString()}
+                                                <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
+                                            </p>
+                                        </div>
+
                                         {project.roles.map((role: any, idx: number) => (
                                             <div key={idx} className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-primary-500/50 transition-colors">
                                                 <div className="flex justify-between items-start mb-2">
@@ -519,7 +533,7 @@ export function ProjectDetails() {
                                                     </Badge>
                                                 </div>
                                                 <p className="text-xl font-bold text-white">
-                                                    ${Math.round((simulatedRevenue * role.split) / 100).toLocaleString()}
+                                                    ${Math.round((simulatedRevenue * 0.95 * role.split) / 100).toLocaleString()}
                                                     <span className="text-xs text-slate-400 font-normal ml-1">/ mo</span>
                                                 </p>
                                             </div>
